@@ -1,11 +1,76 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<resources>
-    <style name="MainTheme" parent="Maui.MainTheme">
-        <item name="colorPrimary">#0F0F0F</item>
-        <item name="colorPrimaryDark">#0F0F0F</item>
-        <item name="colorAccent">#7EC8FF</item>
-        <item name="android:statusBarColor">#0F0F0F</item>
-        <item name="android:navigationBarColor">#0F0F0F</item>
-        <item name="android:windowBackground">#0F0F0F</item>
-    </style>
-</resources>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <Style TargetType="ActivityIndicator">
+        <Setter Property="Color" Value="#7EC8FF" />
+    </Style>
+
+    <Style TargetType="Button">
+        <Setter Property="TextColor" Value="#7EC8FF" />
+        <Setter Property="BackgroundColor" Value="#1E1E1E" />
+        <Setter Property="FontFamily" Value="OpenSansRegular"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="Padding" Value="14,10"/>
+        <Setter Property="MinimumHeightRequest" Value="44"/>
+        <Setter Property="MinimumWidthRequest" Value="44"/>
+        <Setter Property="VisualStateManager.VisualStateGroups">
+            <VisualStateGroupList>
+                <VisualStateGroup x:Name="CommonStates">
+                    <VisualState x:Name="Normal" />
+                    <VisualState x:Name="Disabled">
+                        <VisualState.Setters>
+                            <Setter Property="TextColor" Value="#555555" />
+                            <Setter Property="BackgroundColor" Value="#1E1E1E" />
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="PointerOver" />
+                    <VisualState x:Name="Pressed">
+                        <VisualState.Setters>
+                            <Setter Property="BackgroundColor" Value="#2A2A2A" />
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateGroupList>
+        </Setter>
+    </Style>
+
+    <Style TargetType="Border">
+        <Setter Property="Stroke" Value="Transparent" />
+    </Style>
+
+    <Style TargetType="Entry">
+        <Setter Property="TextColor" Value="#7EC8FF" />
+        <Setter Property="BackgroundColor" Value="Transparent" />
+        <Setter Property="PlaceholderColor" Value="#777777" />
+    </Style>
+
+    <Style TargetType="Label">
+        <Setter Property="TextColor" Value="#7EC8FF" />
+    </Style>
+
+    <Style TargetType="Page">
+        <Setter Property="BackgroundColor" Value="#0F0F0F" />
+    </Style>
+
+    <Style TargetType="Shell" ApplyToDerivedTypes="True">
+        <Setter Property="Shell.BackgroundColor" Value="#0F0F0F" />
+        <Setter Property="Shell.ForegroundColor" Value="#7EC8FF" />
+        <Setter Property="Shell.TitleColor" Value="#7EC8FF" />
+        <Setter Property="Shell.DisabledColor" Value="#555555" />
+        <Setter Property="Shell.UnselectedColor" Value="#777777" />
+        <Setter Property="Shell.NavBarHasShadow" Value="False" />
+        <Setter Property="Shell.TabBarBackgroundColor" Value="#0F0F0F" />
+        <Setter Property="Shell.TabBarForegroundColor" Value="#7EC8FF" />
+        <Setter Property="Shell.TabBarTitleColor" Value="#7EC8FF" />
+        <Setter Property="Shell.TabBarUnselectedColor" Value="#777777" />
+    </Style>
+
+    <Style TargetType="NavigationPage">
+        <Setter Property="BarBackgroundColor" Value="#0F0F0F" />
+        <Setter Property="BarTextColor" Value="#7EC8FF" />
+        <Setter Property="BackgroundColor" Value="#0F0F0F" />
+    </Style>
+
+</ResourceDictionary>
