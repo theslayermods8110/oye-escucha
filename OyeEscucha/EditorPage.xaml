@@ -1,1 +1,17 @@
-
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="OyeEscucha.EditorPage"
+             Title="Editar"
+             BackgroundColor="#0F0F0F">
+    <Grid RowDefinitions="Auto,*,Auto" Padding="16" RowSpacing="10">
+        <Label x:Name="FileNameLabel" Text="Archivo" FontSize="18" FontAttributes="Bold" TextColor="#7EC8FF" LineBreakMode="TailTruncation"/>
+        <Border Grid.Row="1" BackgroundColor="#1E1E1E" StrokeShape="RoundRectangle 12,12,12,12" Stroke="Transparent" Padding="4">
+            <Editor x:Name="CodeEditor" TextColor="#7EC8FF" FontSize="14" FontFamily="monospace" BackgroundColor="Transparent" AutoSize="Disabled"/>
+        </Border>
+        <Grid Grid.Row="2" ColumnDefinitions="*,*" ColumnSpacing="10">
+            <Button Grid.Column="0" Text="Cancelar" BackgroundColor="#333" TextColor="#7EC8FF" CornerRadius="10" Clicked="OnCancelClicked"/>
+            <Button Grid.Column="1" Text="Guardar" BackgroundColor="#2196F3" TextColor="White" CornerRadius="10" Clicked="OnSaveClicked"/>
+        </Grid>
+    </Grid>
+</ContentPage>
