@@ -3,10 +3,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="OyeEscucha.MainPage"
              BackgroundColor="#0F0F0F">
-    <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,*" Padding="16" RowSpacing="10">
+    <Grid RowDefinitions="Auto,Auto,Auto,*,Auto" Padding="16" RowSpacing="10">
         <VerticalStackLayout Grid.Row="0" Spacing="2">
             <Label x:Name="TitleLabel" Text="Mis Archivos" FontSize="26" FontAttributes="Bold" TextColor="#7EC8FF"/>
-            <Label x:Name="PathLabel" Text="/storage" FontSize="12" TextColor="#7EC8FF" Opacity="0.7"/>
+            <Label x:Name="PathLabel" Text="/storage" FontSize="12" TextColor="#7EC8FF" Opacity="0.7">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnPathTapped"/>
+                </Label.GestureRecognizers>
+            </Label>
+            <Label Text="Toca la ruta para copiarla" FontSize="10" TextColor="#7EC8FF" Opacity="0.4"/>
         </VerticalStackLayout>
         <Frame Grid.Row="1" BackgroundColor="#1E1E1E" CornerRadius="14" Padding="12,8" HasShadow="False" BorderColor="Transparent">
             <HorizontalStackLayout Spacing="10">
@@ -14,21 +19,17 @@
                 <Entry x:Name="SearchEntry" Placeholder="Buscar archivos..." PlaceholderColor="#7EC8FF" TextColor="#7EC8FF" HorizontalOptions="FillAndExpand" BackgroundColor="Transparent" TextChanged="OnSearchChanged"/>
             </HorizontalStackLayout>
         </Frame>
-        <Grid Grid.Row="2" ColumnDefinitions="*,*,*,*" ColumnSpacing="6">
-            <Button Grid.Column="0" x:Name="BackBtn" Text="Atras" BackgroundColor="#333" TextColor="#7EC8FF" CornerRadius="10" FontSize="12" Padding="4,8" Clicked="OnBackClicked"/>
-            <Button Grid.Column="1" x:Name="HomeBtn" Text="Inicio" BackgroundColor="#333" TextColor="#7EC8FF" CornerRadius="10" FontSize="12" Padding="4,8" Clicked="OnHomeClicked"/>
-            <Button Grid.Column="2" x:Name="RefreshBtn" Text="Recargar" BackgroundColor="#333" TextColor="#7EC8FF" CornerRadius="10" FontSize="12" Padding="4,8" Clicked="OnRefreshClicked"/>
-            <Button Grid.Column="3" x:Name="LangBtn" Text="Idioma" BackgroundColor="#222" TextColor="#7EC8FF" CornerRadius="10" FontSize="12" Padding="4,8" Clicked="OnChangeLangClicked"/>
-        </Grid>
-        <Button Grid.Row="3" x:Name="PermissionBtn" Text="Dar permiso total para ver dentro de carpetas" BackgroundColor="#FF9800" TextColor="Black" CornerRadius="12" Clicked="OnPermissionClicked" IsVisible="False"/>
-        <Label Grid.Row="4" x:Name="StatusLabel" Text="Cargando..." TextColor="#7EC8FF" FontSize="13" FontAttributes="Bold" Opacity="0.9"/>
-        <CollectionView Grid.Row="5" x:Name="FilesList" SelectionMode="Single" SelectionChanged="OnFileSelected" VerticalOptions="FillAndExpand" VerticalScrollBarVisibility="Always">
+        <Button Grid.Row="2" x:Name="PermissionBtn" Text="Dar permiso total para ver dentro de carpetas" BackgroundColor="#FF9800" TextColor="Black" CornerRadius="12" Clicked="OnPermissionClicked" IsVisible="False"/>
+        <CollectionView Grid.Row="3" x:Name="FilesList" SelectionMode="Single" SelectionChanged="OnFileSelected" VerticalOptions="FillAndExpand" VerticalScrollBarVisibility="Always">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
                     <Border BackgroundColor="#1E1E1E" StrokeShape="RoundRectangle 14,14,14,14" Stroke="Transparent" Padding="12" Margin="0,0,0,8">
                         <HorizontalStackLayout Spacing="12">
-                            <Border BackgroundColor="{Binding BadgeColor}" StrokeShape="RoundRectangle 12,12,12,12" Stroke="Transparent" WidthRequest="52" HeightRequest="52" VerticalOptions="Center" Padding="11">
-                                <Path Data="{Binding IconGeometry}" Fill="White" Aspect="Uniform" HorizontalOptions="Center" VerticalOptions="Center" />
+                            <Border BackgroundColor="{Binding BadgeColor}" StrokeShape="RoundRectangle 12,12,12,12" Stroke="Transparent" WidthRequest="52" HeightRequest="52" VerticalOptions="Center" Padding="0">
+                                <Grid>
+                                    <Path Data="{Binding IconGeometry}" Fill="White" Aspect="Uniform" HorizontalOptions="Center" VerticalOptions="Center" WidthRequest="28" HeightRequest="28" IsVisible="{Binding ShowDefaultIcon}"/>
+                                    <Image Source="{Binding ApkIcon}" Aspect="AspectFill" IsVisible="{Binding HasApkIcon}"/>
+                                </Grid>
                             </Border>
                             <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="FillAndExpand">
                                 <Label Text="{Binding Name}" TextColor="#7EC8FF" FontSize="15" FontAttributes="Bold" LineBreakMode="TailTruncation"/>
@@ -42,5 +43,14 @@
                 <Label Text="Carpeta vacia o sin permiso. Dale al boton naranja." TextColor="#7EC8FF" HorizontalOptions="Center" Margin="0,40,0,0"/>
             </CollectionView.EmptyView>
         </CollectionView>
+        <Label Grid.Row="4" x:Name="StatusLabel" Text="Cargando..." TextColor="#7EC8FF" FontSize="13" FontAttributes="Bold" Opacity="0.9" HorizontalOptions="Center"/>
+        <Border Grid.Row="5" BackgroundColor="#1E1E1E" StrokeShape="RoundRectangle 18,18,18,18" Stroke="Transparent" Padding="8" Margin="0,4,0,0">
+            <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="6">
+                <Button Grid.Column="0" x:Name="BackBtn" Text="Atras" BackgroundColor="#333" TextColor="#7EC8FF" CornerRadius="14" FontSize="12" Padding="4,10" Clicked="OnBackClicked"/>
+                <Button Grid.Column="1" x:Name="HomeBtn" Text="Inicio" BackgroundColor="#333" TextColor="#7EC8FF" CornerRadius="14" FontSize="12" Padding="4,10" Clicked="OnHomeClicked"/>
+                <Button Grid.Column="2" x:Name="RefreshBtn" Text="Recargar" BackgroundColor="#333" TextColor="#7EC8FF" CornerRadius="14" FontSize="12" Padding="4,10" Clicked="OnRefreshClicked"/>
+                <Button Grid.Column="3" x:Name="LangBtn" Text="Idioma" BackgroundColor="#2196F3" TextColor="White" CornerRadius="14" FontSize="12" Padding="4,10" Clicked="OnChangeLangClicked"/>
+            </Grid>
+        </Border>
     </Grid>
 </ContentPage>
