@@ -5,6 +5,9 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -30,6 +33,14 @@ jobs:
           if [ ! -f "OyeEscucha/OyeEscucha.csproj" ]; then
             dotnet new maui -n OyeEscucha -o OyeEscucha
           fi
+
+      - name: Guardar proyecto en GitHub
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add OyeEscucha
+          git commit -m "Crear proyecto OyeEscucha" || echo "Nada nuevo"
+          git push || echo "No se pudo subir"
 
       - name: Build APK
         run: |
