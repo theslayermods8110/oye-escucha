@@ -1,55 +1,15 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="OyeEscucha.MainPage"
-             BackgroundColor="#0F0F0F">
-    <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,*" Padding="16" RowSpacing="12">
-        <VerticalStackLayout Grid.Row="0" Spacing="2">
-            <Label x:Name="TitleLabel" Text="Mis Archivos" FontSize="26" FontAttributes="Bold" TextColor="#ADD8E6"/>
-            <Label x:Name="PathLabel" Text="/storage" FontSize="12" TextColor="#ADD8E6" Opacity="0.7"/>
-        </VerticalStackLayout>
+<Shell
+    x:Class="OyeEscucha.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:OyeEscucha"
+    Shell.FlyoutBehavior="Disabled"
+    Shell.NavBarIsVisible="False">
 
-        <Frame Grid.Row="1" BackgroundColor="#1E1E1E" CornerRadius="14" Padding="12,8" HasShadow="False" BorderColor="Transparent">
-            <HorizontalStackLayout Spacing="10">
-                <Label Text="🔍" FontSize="18" VerticalOptions="Center" TextColor="#ADD8E6"/>
-                <Entry x:Name="SearchEntry" Placeholder="Buscar archivos..." PlaceholderColor="#7FB5D5" TextColor="#ADD8E6" HorizontalOptions="FillAndExpand" BackgroundColor="Transparent" TextChanged="OnSearchChanged"/>
-            </HorizontalStackLayout>
-        </Frame>
+    <ShellContent
+        Title="Home"
+        ContentTemplate="{DataTemplate local:MainPage}"
+        Route="MainPage" />
 
-        <HorizontalStackLayout Grid.Row="2" Spacing="10">
-            <Button x:Name="BackBtn" Text="⬅ Atrás" BackgroundColor="#333" TextColor="#ADD8E6" CornerRadius="12" Clicked="OnBackClicked"/>
-            <Button x:Name="HomeBtn" Text="🏠 Inicio" BackgroundColor="#333" TextColor="#ADD8E6" CornerRadius="12" Clicked="OnHomeClicked"/>
-            <Button x:Name="RefreshBtn" Text="🔄 Recargar" BackgroundColor="#4CAF50" TextColor="White" CornerRadius="12" Clicked="OnRefreshClicked"/>
-        </HorizontalStackLayout>
-
-        <Button Grid.Row="3" x:Name="PermissionBtn" Text="⚠️ Dar permiso total para ver dentro de carpetas" BackgroundColor="#FF9800" TextColor="Black" CornerRadius="12" Clicked="OnPermissionClicked" IsVisible="False"/>
-
-        <HorizontalStackLayout Grid.Row="4" Spacing="10">
-            <Label Text="🌐 Idioma:" TextColor="#ADD8E6" VerticalOptions="Center" FontSize="13"/>
-            <Button x:Name="LangBtn" Text="Cambiar idioma" BackgroundColor="#222" TextColor="#ADD8E6" CornerRadius="10" FontSize="13" Clicked="OnChangeLangClicked"/>
-        </HorizontalStackLayout>
-
-        <Label Grid.Row="5" x:Name="StatusLabel" Text="Cargando..." TextColor="#ADD8E6" FontSize="13" Opacity="0.8"/>
-
-        <!-- SIN TapGestureRecognizer - así sí desliza y sí abre -->
-        <CollectionView Grid.Row="6" x:Name="FilesList" SelectionMode="Single" SelectionChanged="OnFileSelected" VerticalOptions="FillAndExpand" VerticalScrollBarVisibility="Always">
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <Border BackgroundColor="#1E1E1E" StrokeShape="RoundRectangle 14,14,14,14" Stroke="Transparent" Padding="14" Margin="0,0,0,8">
-                        <HorizontalStackLayout Spacing="12">
-                            <Label Text="{Binding Icon}" FontSize="26" VerticalOptions="Center" TextColor="#ADD8E6"/>
-                            <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="FillAndExpand">
-                                <Label Text="{Binding Name}" TextColor="#ADD8E6" FontSize="15" FontAttributes="Bold" LineBreakMode="TailTruncation"/>
-                                <Label Text="{Binding Info}" TextColor="#ADD8E6" Opacity="0.6" FontSize="12"/>
-                            </VerticalStackLayout>
-                            <Label Text="›" TextColor="#ADD8E6" FontSize="22" VerticalOptions="Center"/>
-                        </HorizontalStackLayout>
-                    </Border>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-            <CollectionView.EmptyView>
-                <Label Text="Carpeta vacía o sin permiso. Dale al botón naranja." TextColor="#ADD8E6" HorizontalOptions="Center" Margin="0,40,0,0"/>
-            </CollectionView.EmptyView>
-        </CollectionView>
-    </Grid>
-</ContentPage>
+</Shell>
