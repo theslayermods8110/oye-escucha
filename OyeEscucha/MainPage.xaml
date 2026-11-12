@@ -4,11 +4,9 @@
              x:Class="OyeEscucha.MainPage"
              BackgroundColor="#0F0F0F">
     <Grid>
-        <!-- CONTENIDO -->
         <Grid RowDefinitions="Auto,Auto,Auto,*" Padding="16,16,16,0" RowSpacing="10">
-            
-            <!-- ARRIBA - TITULO + ••• -->
-            <Grid Grid.Row="0" ColumnDefinitions="*,Auto" VerticalOptions="Center">
+            <!-- ARRIBA: TITULO + SOL/LUNA + ••• -->
+            <Grid Grid.Row="0" ColumnDefinitions="*,Auto,Auto" VerticalOptions="Center">
                 <VerticalStackLayout Spacing="2">
                     <Label x:Name="TitleLabel" Text="Mis Archivos" FontSize="26" FontAttributes="Bold" TextColor="#7EC8FF"/>
                     <Label x:Name="PathLabel" Text="/storage" FontSize="12" TextColor="#7EC8FF" Opacity="0.7">
@@ -16,12 +14,19 @@
                             <TapGestureRecognizer Tapped="OnPathTapped"/>
                         </Label.GestureRecognizers>
                     </Label>
+                    <Label Text="Toca la ruta para copiarla" FontSize="10" TextColor="#7EC8FF" Opacity="0.4"/>
                 </VerticalStackLayout>
-                <!-- BOTON ••• -->
-                <Button Grid.Column="1" Text="•••" FontSize="20" TextColor="White" BackgroundColor="Transparent" WidthRequest="48" HeightRequest="48" Clicked="OnMenuClicked"/>
+                <!-- SOL / LUNA -->
+                <Grid Grid.Column="1" WidthRequest="40" HeightRequest="40" VerticalOptions="Center">
+                    <Grid.GestureRecognizers><TapGestureRecognizer Tapped="OnThemeClicked"/></Grid.GestureRecognizers>
+                    <Label x:Name="SunIcon" Text="☀️" FontSize="22" HorizontalOptions="Center" VerticalOptions="Center" IsVisible="False"/>
+                    <Label x:Name="MoonIcon" Text="🌙" FontSize="22" HorizontalOptions="Center" VerticalOptions="Center"/>
+                </Grid>
+                <!-- ••• -->
+                <Button Grid.Column="2" Text="•••" FontSize="20" TextColor="White" BackgroundColor="Transparent" WidthRequest="48" HeightRequest="48" Clicked="OnMenuClicked"/>
             </Grid>
 
-            <!-- BUSCAR - ESCONDIDO HASTA QUE LO PIDAS EN ••• -->
+            <!-- BUSCAR - ESCONDIDO, SOLO SALE DESDE ••• -->
             <Border Grid.Row="1" x:Name="SearchBox" IsVisible="False" BackgroundColor="#1E1E1E" StrokeShape="RoundRectangle 14,14,14,14" Stroke="Transparent" Padding="12,8">
                 <HorizontalStackLayout Spacing="10">
                     <Label Text="🔍" FontSize="16" VerticalOptions="Center"/>
@@ -37,8 +42,13 @@
                     <DataTemplate>
                         <Border BackgroundColor="#1E1E1E" StrokeShape="RoundRectangle 14,14,14,14" Stroke="Transparent" Padding="12" Margin="0,0,0,8">
                             <HorizontalStackLayout Spacing="12">
-                                <!-- ICONO DE BUENA CALIDAD - IMAGEN, NO PATH FEO -->
-                                <Image Source="{Binding IconImage}" WidthRequest="52" HeightRequest="52" Aspect="AspectFit" VerticalOptions="Center"/>
+                                <!-- ICONO BUENA CALIDAD - IMAGEN DE FLATICON / ICONS8 -->
+                                <Border BackgroundColor="#2A2A2A" StrokeShape="RoundRectangle 12,12,12,12" Stroke="Transparent" WidthRequest="52" HeightRequest="52" VerticalOptions="Center" Padding="4">
+                                    <Grid>
+                                        <Image Source="{Binding IconImage}" Aspect="AspectFit" IsVisible="{Binding ShowDefaultIcon}"/>
+                                        <Image Source="{Binding ApkIcon}" Aspect="AspectFill" IsVisible="{Binding HasApkIcon}"/>
+                                    </Grid>
+                                </Border>
                                 <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="FillAndExpand">
                                     <Label Text="{Binding Name}" TextColor="#7EC8FF" FontSize="15" FontAttributes="Bold" LineBreakMode="TailTruncation"/>
                                     <Label Text="{Binding Info}" TextColor="#7EC8FF" Opacity="0.6" FontSize="12" FontAttributes="Bold"/>
@@ -51,26 +61,24 @@
                 <CollectionView.EmptyView>
                     <Label Text="Carpeta vacia o sin permiso." TextColor="#7EC8FF" HorizontalOptions="Center" Margin="0,40,0,0"/>
                 </CollectionView.EmptyView>
-                <CollectionView.Footer>
-                    <BoxView HeightRequest="110" Color="Transparent"/>
-                </CollectionView.Footer>
+                <CollectionView.Footer><BoxView HeightRequest="110" Color="Transparent"/></CollectionView.Footer>
             </CollectionView>
         </Grid>
 
         <Label x:Name="StatusLabel" Text="" IsVisible="False" HeightRequest="0"/>
 
-        <!-- ABAJO - SIN FONDO OSCURO - SEPARADOS Y FLOTANDO HACIA ARRIBA -->
+        <!-- ABAJO - SIN FONDO OSCURO - SEPARADOS Y FLOTANDO -->
         <Grid VerticalOptions="End" HorizontalOptions="FillAndExpand" Margin="12,0,12,16" ColumnDefinitions="*,*,*,*" ColumnSpacing="8" BackgroundColor="Transparent">
-            <Border Grid.Column="0" BackgroundColor="#1E1E1E" StrokeShape="RoundRectangle 16,16,16,16" Stroke="#333" StrokeThickness="1" Padding="0" Shadow="0,5,15,Black">
+            <Border Grid.Column="0" BackgroundColor="#1E1E1E" StrokeShape="RoundRectangle 16,16,16,16" Stroke="#333" StrokeThickness="1" Padding="0">
                 <Button x:Name="BackBtn" Text="Atras" BackgroundColor="Transparent" TextColor="#7EC8FF" FontSize="12" Padding="4,10" Clicked="OnBackClicked"/>
             </Border>
-            <Border Grid.Column="1" BackgroundColor="#1E1E1E" StrokeShape="RoundRectangle 16,16,16,16" Stroke="#333" StrokeThickness="1" Padding="0" Shadow="0,5,15,Black">
+            <Border Grid.Column="1" BackgroundColor="#1E1E1E" StrokeShape="RoundRectangle 16,16,16,16" Stroke="#333" StrokeThickness="1" Padding="0">
                 <Button x:Name="HomeBtn" Text="Inicio" BackgroundColor="Transparent" TextColor="#7EC8FF" FontSize="12" Padding="4,10" Clicked="OnHomeClicked"/>
             </Border>
-            <Border Grid.Column="2" BackgroundColor="#1E1E1E" StrokeShape="RoundRectangle 16,16,16,16" Stroke="#333" StrokeThickness="1" Padding="0" Shadow="0,5,15,Black">
+            <Border Grid.Column="2" BackgroundColor="#1E1E1E" StrokeShape="RoundRectangle 16,16,16,16" Stroke="#333" StrokeThickness="1" Padding="0">
                 <Button x:Name="RefreshBtn" Text="Recargar" BackgroundColor="Transparent" TextColor="#7EC8FF" FontSize="12" Padding="4,10" Clicked="OnRefreshClicked"/>
             </Border>
-            <Border Grid.Column="3" BackgroundColor="#1E1E1E" StrokeShape="RoundRectangle 16,16,16,16" Stroke="#333" StrokeThickness="1" Padding="0" Shadow="0,5,15,Black">
+            <Border Grid.Column="3" BackgroundColor="#1E1E1E" StrokeShape="RoundRectangle 16,16,16,16" Stroke="#333" StrokeThickness="1" Padding="0">
                 <Button x:Name="LangBtn" Text="Idioma" BackgroundColor="Transparent" TextColor="#7EC8FF" FontSize="12" Padding="4,10" Clicked="OnChangeLangClicked"/>
             </Border>
         </Grid>
