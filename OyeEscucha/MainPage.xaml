@@ -7,7 +7,7 @@
     <ContentPage.Resources>
         <local:IconConverter x:Key="IconConverter" />
     </ContentPage.Resources>
-    <Grid RowDefinitions="Auto,Auto,Auto,Auto,*" Padding="16" RowSpacing="10">
+    <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,*" Padding="16" RowSpacing="10">
         <VerticalStackLayout Grid.Row="0" Spacing="2">
             <Label x:Name="TitleLabel" Text="Mis Archivos" FontSize="26" FontAttributes="Bold" TextColor="#ADD8E6"/>
             <Label x:Name="PathLabel" Text="/storage" FontSize="12" TextColor="#ADD8E6" Opacity="0.7"/>
@@ -20,7 +20,6 @@
             </HorizontalStackLayout>
         </Frame>
 
-        <!-- TODO EN UNA SOLA LINEA - 4 BOTONES JUNTOS -->
         <Grid Grid.Row="2" ColumnDefinitions="*,*,*,*" ColumnSpacing="6">
             <Button Grid.Column="0" x:Name="BackBtn" Text="Atras" BackgroundColor="#333" TextColor="#ADD8E6" CornerRadius="10" FontSize="12" Padding="4,8" Clicked="OnBackClicked"/>
             <Button Grid.Column="1" x:Name="HomeBtn" Text="Inicio" BackgroundColor="#333" TextColor="#ADD8E6" CornerRadius="10" FontSize="12" Padding="4,8" Clicked="OnHomeClicked"/>
@@ -29,12 +28,10 @@
         </Grid>
 
         <Button Grid.Row="3" x:Name="PermissionBtn" Text="Dar permiso total para ver dentro de carpetas" BackgroundColor="#FF9800" TextColor="Black" CornerRadius="12" Clicked="OnPermissionClicked" IsVisible="False"/>
-        <Label Grid.Row="3" x:Name="StatusLabel" Text="Cargando..." TextColor="#ADD8E6" FontSize="13" Opacity="0.8" IsVisible="False"/>
 
-        <CollectionView Grid.Row="4" x:Name="FilesList" SelectionMode="Single" SelectionChanged="OnFileSelected" VerticalOptions="FillAndExpand" VerticalScrollBarVisibility="Always">
-            <CollectionView.Header>
-                <Label x:Name="StatusLabel2" Text="Cargando..." TextColor="#ADD8E6" FontSize="13" Opacity="0.8" Margin="0,0,0,8"/>
-            </CollectionView.Header>
+        <Label Grid.Row="4" x:Name="StatusLabel" Text="Cargando..." TextColor="#ADD8E6" FontSize="13" Opacity="0.8"/>
+
+        <CollectionView Grid.Row="5" x:Name="FilesList" SelectionMode="Single" SelectionChanged="OnFileSelected" VerticalOptions="FillAndExpand" VerticalScrollBarVisibility="Always">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
                     <Border BackgroundColor="#1E1E1E" StrokeShape="RoundRectangle 14,14,14,14" Stroke="Transparent" Padding="12" Margin="0,0,0,8">
