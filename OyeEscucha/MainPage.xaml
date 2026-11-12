@@ -17,7 +17,18 @@
                     </Label>
                     <Label Text="Toca la ruta para copiarla" FontSize="10" TextColor="{AppThemeBinding Light=#888888, Dark=#7EC8FF}" Opacity="0.4"/>
                 </VerticalStackLayout>
-                <Button Grid.Column="1" x:Name="ThemeBtn" Text="🌙" FontSize="22" BackgroundColor="Transparent" TextColor="{AppThemeBinding Light=Black, Dark=#7EC8FF}" WidthRequest="50" HeightRequest="50" CornerRadius="25" VerticalOptions="Start" Clicked="OnThemeClicked"/>
+                <!-- SOL / LUNA EN VECTOR, SIN EMOJI -->
+                <Border Grid.Column="1" WidthRequest="50" HeightRequest="50" StrokeShape="RoundRectangle 25,25,25,25" BackgroundColor="Transparent" Stroke="Transparent" VerticalOptions="Start" Padding="0">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnThemeClicked"/>
+                    </Border.GestureRecognizers>
+                    <Grid WidthRequest="28" HeightRequest="28" HorizontalOptions="Center" VerticalOptions="Center">
+                        <!-- LUNA - se ve en modo DARK -->
+                        <Path x:Name="MoonIcon" Data="M21 12.79 A9 9 0 1 1 11.21 3 A7 7 0 0 0 21 12.79 Z" Fill="#7EC8FF" Aspect="Uniform" HorizontalOptions="Center" VerticalOptions="Center" WidthRequest="26" HeightRequest="26" IsVisible="True"/>
+                        <!-- SOL - se ve en modo LIGHT -->
+                        <Path x:Name="SunIcon" Data="M12 17 A5 5 0 1 1 12 7 A5 5 0 0 1 12 17 Z M12 1 V4 M12 20 V23 M4.22 4.22 L6.34 6.34 M17.66 17.66 L19.78 19.78 M1 12 H4 M20 12 H23 M4.22 19.78 L6.34 17.66 M17.66 6.34 L19.78 4.22" Stroke="Black" StrokeThickness="2" Fill="Transparent" Aspect="Uniform" HorizontalOptions="Center" VerticalOptions="Center" WidthRequest="26" HeightRequest="26" IsVisible="False"/>
+                    </Grid>
+                </Border>
             </Grid>
             <Border Grid.Row="1" BackgroundColor="{AppThemeBinding Light=#F0F0F0, Dark=#1E1E1E}" StrokeShape="RoundRectangle 14,14,14,14" Stroke="Transparent" Padding="12,8">
                 <HorizontalStackLayout Spacing="10">
