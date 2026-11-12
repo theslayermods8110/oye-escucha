@@ -7,11 +7,19 @@
     <Grid RowDefinitions="Auto,*,Auto" Padding="16" RowSpacing="10">
         <Label x:Name="FileNameLabel" Text="Archivo" FontSize="18" FontAttributes="Bold" TextColor="#7EC8FF" LineBreakMode="TailTruncation"/>
         <Border Grid.Row="1" BackgroundColor="#1E1E1E" StrokeShape="RoundRectangle 12,12,12,12" Stroke="Transparent" Padding="4">
-            <Editor x:Name="CodeEditor" TextColor="#7EC8FF" FontSize="14" FontFamily="monospace" BackgroundColor="Transparent" AutoSize="Disabled"/>
+            <Editor x:Name="CodeEditor" TextColor="#7EC8FF" FontSize="14" BackgroundColor="Transparent" AutoSize="Disabled"/>
         </Border>
         <Grid Grid.Row="2" ColumnDefinitions="*,*" ColumnSpacing="10">
-            <Button Grid.Column="0" Text="Cancelar" BackgroundColor="#333" TextColor="#7EC8FF" CornerRadius="10" Clicked="OnCancelClicked"/>
-            <Button Grid.Column="1" Text="Guardar" BackgroundColor="#2196F3" TextColor="White" CornerRadius="10" Clicked="OnSaveClicked"/>
+            <Button Grid.Column="0" x:Name="CancelBtn" Text="Cancelar" BackgroundColor="#333" TextColor="#7EC8FF" CornerRadius="14" Clicked="OnCancelClicked"/>
+            <Button Grid.Column="1" x:Name="SaveBtn" Text="Guardar" BackgroundColor="#2196F3" TextColor="White" CornerRadius="14" Clicked="OnSaveClicked"/>
+        </Grid>
+        <Grid Grid.RowSpan="3" x:Name="SavedPopup" IsVisible="False" BackgroundColor="#80000000" Padding="30">
+            <Border BackgroundColor="#1E1E1E" StrokeShape="RoundRectangle 20,20,20,20" Stroke="Transparent" Padding="24" VerticalOptions="Center" HorizontalOptions="Center">
+                <VerticalStackLayout Spacing="10" HorizontalOptions="Center">
+                    <Label Text="✓ Guardado" FontSize="22" FontAttributes="Bold" TextColor="#4CAF50" HorizontalOptions="Center"/>
+                    <Label Text="El archivo se guardo correctamente" FontSize="14" TextColor="#7EC8FF" HorizontalOptions="Center" HorizontalTextAlignment="Center"/>
+                </VerticalStackLayout>
+            </Border>
         </Grid>
     </Grid>
 </ContentPage>
