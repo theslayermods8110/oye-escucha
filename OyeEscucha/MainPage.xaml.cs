@@ -80,7 +80,6 @@ public partial class MainPage : ContentPage
         catch { }
     }
 
-    // COPIAR RUTA AL TOCARLA
     private async void OnPathTapped(object sender, EventArgs e)
     {
         try
@@ -89,6 +88,57 @@ public partial class MainPage : ContentPage
             await DisplayAlert("Copiado", currentPath, "OK");
         }
         catch { }
+    }
+
+    // CREAR CARPETA
+    private async void OnCreateFolderClicked(object sender, EventArgs e)
+    {
+        try
+        {
+            string name = await DisplayPromptAsync("Crear Carpeta", "Nombre de la carpeta:", "Crear", "Cancelar", "Mi Carpeta");
+            if (string.IsNullOrWhiteSpace(name)) return;
+            name = name.Trim();
+            // Quita caracteres que no se pueden usar
+            foreach (char c in Path.GetInvalidFileNameChars()) name = name.Replace(c, '_');
+            string newPath = Path.Combine(currentPath, name);
+            if (Directory.Exists(newPath))
+            {
+                await DisplayAlert("Aviso", "Esa carpeta ya existe.", "OK");
+                return;
+            }
+            Directory.CreateDirectory(newPath);
+            await LoadFolder(currentPath);
+        }
+        catch (Exception ex) { await DisplayAlert("Error", "No se pudo crear: " + ex.Message, "OK"); }
+    }
+
+    // CREAR ARCHIVO
+    private async void OnCreateFileClicked(object sender, EventArgs e)
+    {
+        try
+        {
+            string name = await DisplayPromptAsync("Crear Archivo", "Nombre del archivo (ej: nota.txt):", "Crear", "Cancelar", "nuevo.txt");
+            if (string.IsNullOrWhiteSpace(name)) return;
+            name = name.Trim();
+            foreach (char c in Path.GetInvalidFileNameChars()) name = name.Replace(c, '_');
+            // Si no tiene extension, le pone .txt
+            if (string.IsNullOrEmpty(Path.GetExtension(name))) name += ".txt";
+            string newPath = Path.Combine(currentPath, name);
+            if (File.Exists(newPath))
+            {
+                await DisplayAlert("Aviso", "Ese archivo ya existe.", "OK");
+                return;
+            }
+            File.WriteAllText(newPath, "");
+            // Si es editable, lo abre directo en el editor
+            string ext = Path.GetExtension(newPath).ToLower();
+            if (ext is ".txt" or ".json" or ".kt" or ".cs" or ".xml" or ".md" or ".log" or ".html" or ".css" or ".js" or ".py" or ".java")
+            {
+                await Navigation.PushAsync(new EditorPage(newPath));
+            }
+            await LoadFolder(currentPath);
+        }
+        catch (Exception ex) { await DisplayAlert("Error", "No se pudo crear: " + ex.Message, "OK"); }
     }
 
     private async Task AskLanguage()
@@ -174,7 +224,6 @@ public partial class MainPage : ContentPage
         await LoadFolder(currentPath);
     }
 
-    // SACAR ICONO REAL DEL APK
     private (ImageSource icon, bool has) GetApkIcon(string apkPath)
     {
         try
