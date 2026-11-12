@@ -80,7 +80,7 @@ public partial class MainPage : ContentPage
         catch { }
     }
 
-    private async void OnPathTapped(object? sender, EventArgs e)
+    private async void OnPathTapped(object sender, EventArgs e)
     {
         try
         {
@@ -90,7 +90,7 @@ public partial class MainPage : ContentPage
         catch { }
     }
 
-    private async void OnCreateFolderClicked(object? sender, EventArgs e)
+    private async void OnCreateFolderClicked(object sender, EventArgs e)
     {
         try
         {
@@ -110,7 +110,7 @@ public partial class MainPage : ContentPage
         catch (Exception ex) { await DisplayAlertAsync("Error", "No se pudo crear: " + ex.Message, "OK"); }
     }
 
-    private async void OnCreateFileClicked(object? sender, EventArgs e)
+    private async void OnCreateFileClicked(object sender, EventArgs e)
     {
         try
         {
@@ -184,7 +184,7 @@ public partial class MainPage : ContentPage
         catch { PermissionBtn.IsVisible = false; }
     }
 
-    private async void OnPermissionClicked(object? sender, EventArgs e)
+    private async void OnPermissionClicked(object sender, EventArgs e)
     {
         try
         {
@@ -213,7 +213,7 @@ public partial class MainPage : ContentPage
         await LoadFolder(currentPath);
     }
 
-    private async void OnChangeLangClicked(object? sender, EventArgs e)
+    private async void OnChangeLangClicked(object sender, EventArgs e)
     {
         await AskLanguage();
         await LoadFolder(currentPath);
@@ -226,7 +226,7 @@ public partial class MainPage : ContentPage
 #if ANDROID
             var activity = Platform.CurrentActivity;
             var pm = activity!.PackageManager;
-            var info = pm!.GetPackageArchiveInfo(apkPath, Android.Content.PM.PackageInfoFlags.Of(0));
+            var info = pm!.GetPackageArchiveInfo(apkPath, 0);
             if (info?.ApplicationInfo == null) return (null, false);
             info.ApplicationInfo.SourceDir = apkPath;
             info.ApplicationInfo.PublicSourceDir = apkPath;
@@ -344,9 +344,9 @@ public partial class MainPage : ContentPage
         catch { }
     }
 
-    private void OnSearchChanged(object? sender, TextChangedEventArgs e) => RefreshList(e.NewTextValue ?? "");
+    private void OnSearchChanged(object sender, TextChangedEventArgs e) => RefreshList(e.NewTextValue ?? "");
 
-    private async void OnFileSelected(object? sender, SelectionChangedEventArgs e)
+    private async void OnFileSelected(object sender, SelectionChangedEventArgs e)
     {
         try
         {
@@ -412,10 +412,10 @@ public partial class MainPage : ContentPage
         catch { await DisplayAlertAsync("APK", "No se pudo instalar. Dale permiso de 'Instalar apps desconocidas' a esta app.", "OK"); }
     }
 
-    private async void OnBackClicked(object? sender, EventArgs e)
+    private async void OnBackClicked(object sender, EventArgs e)
     {
         try { var parent = Directory.GetParent(currentPath); if (parent != null) await LoadFolder(parent.FullName); } catch { }
     }
-    private async void OnHomeClicked(object? sender, EventArgs e) => await LoadFolder("/storage/emulated/0");
-    private async void OnRefreshClicked(object? sender, EventArgs e) => await LoadFolder(currentPath);
+    private async void OnHomeClicked(object sender, EventArgs e) => await LoadFolder("/storage/emulated/0");
+    private async void OnRefreshClicked(object sender, EventArgs e) => await LoadFolder(currentPath);
 }
