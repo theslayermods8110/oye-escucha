@@ -4,20 +4,27 @@
              x:Class="OyeEscucha.MainPage"
              BackgroundColor="#0F0F0F">
     <VerticalStackLayout Padding="16" Spacing="12">
-        <Label Text="Mis Archivos" FontSize="26" FontAttributes="Bold" TextColor="White"/>
+        <Label x:Name="TitleLabel" Text="Mis Archivos" FontSize="26" FontAttributes="Bold" TextColor="White"/>
         <Label x:Name="PathLabel" Text="/storage" FontSize="12" TextColor="#888888"/>
 
         <Frame BackgroundColor="#1E1E1E" CornerRadius="14" Padding="12,8" HasShadow="False" BorderColor="Transparent">
             <HorizontalStackLayout Spacing="10">
                 <Label Text="🔍" FontSize="18" VerticalOptions="Center"/>
-                <Entry x:Name="SearchEntry" Placeholder="Buscar archivos de verdad..." PlaceholderColor="#777777" TextColor="White" HorizontalOptions="FillAndExpand" BackgroundColor="Transparent" TextChanged="OnSearchChanged"/>
+                <Entry x:Name="SearchEntry" Placeholder="Buscar archivos..." PlaceholderColor="#777777" TextColor="White" HorizontalOptions="FillAndExpand" BackgroundColor="Transparent" TextChanged="OnSearchChanged"/>
             </HorizontalStackLayout>
         </Frame>
 
         <HorizontalStackLayout Spacing="10">
             <Button x:Name="BackBtn" Text="⬅ Atrás" BackgroundColor="#333" TextColor="White" CornerRadius="12" Clicked="OnBackClicked"/>
-            <Button Text="🏠 Inicio" BackgroundColor="#333" TextColor="White" CornerRadius="12" Clicked="OnHomeClicked"/>
-            <Button Text="🔄 Recargar" BackgroundColor="#4CAF50" TextColor="White" CornerRadius="12" Clicked="OnRefreshClicked"/>
+            <Button x:Name="HomeBtn" Text="🏠 Inicio" BackgroundColor="#333" TextColor="White" CornerRadius="12" Clicked="OnHomeClicked"/>
+            <Button x:Name="RefreshBtn" Text="🔄 Recargar" BackgroundColor="#4CAF50" TextColor="White" CornerRadius="12" Clicked="OnRefreshClicked"/>
+        </HorizontalStackLayout>
+
+        <Button x:Name="PermissionBtn" Text="⚠️ Dale aquí para dar permiso total y ver dentro de carpetas" BackgroundColor="#FF9800" TextColor="Black" CornerRadius="12" Clicked="OnPermissionClicked" IsVisible="False"/>
+
+        <HorizontalStackLayout Spacing="10">
+            <Label Text="🌐 Idioma:" TextColor="#888" VerticalOptions="Center" FontSize="13"/>
+            <Button x:Name="LangBtn" Text="Cambiar idioma" BackgroundColor="#222" TextColor="White" CornerRadius="10" FontSize="13" Clicked="OnChangeLangClicked"/>
         </HorizontalStackLayout>
 
         <Label x:Name="StatusLabel" Text="Cargando..." TextColor="#888888" FontSize="13"/>
@@ -38,7 +45,7 @@
                 </DataTemplate>
             </CollectionView.ItemTemplate>
             <CollectionView.EmptyView>
-                <Label Text="No hay archivos aquí o sin permiso. Dale a Recargar y acepta el permiso." TextColor="#888" HorizontalOptions="Center" Margin="0,40,0,0"/>
+                <Label x:Name="EmptyLabel" Text="Carpeta vacía o sin permiso. Dale al botón naranja de permiso total." TextColor="#888" HorizontalOptions="Center" Margin="0,40,0,0"/>
             </CollectionView.EmptyView>
         </CollectionView>
     </VerticalStackLayout>
