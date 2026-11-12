@@ -1,5 +1,5 @@
 using System.Collections.ObjectModel;
-using Microsoft.Maui.Controls.Shapes;
+using MauiShapes = Microsoft.Maui.Controls.Shapes;
 
 namespace OyeEscucha;
 
@@ -9,11 +9,11 @@ public class FileItem
     public string FullPath { get; set; } = "";
     public string BadgeText { get; set; } = "FILE";
     public string BadgeColor { get; set; } = "#607D8B";
-    public Geometry IconGeometry { get; set; }
+    public MauiShapes.Geometry IconGeometry { get; set; }
     public string Info { get; set; } = "";
     public bool IsFolder { get; set; }
 
-    public static Geometry GetIcon(string key)
+    public static MauiShapes.Geometry GetIcon(string key)
     {
         string path = key switch
         {
@@ -28,7 +28,8 @@ public class FileItem
             "ZIP" => "M4 3 L20 3 L20 21 L4 21 Z M12 7 L12 17 M9 10 L12 7 L15 10",
             _ => "M6 2 L14 2 L20 8 L20 22 L6 22 Z M6 2 L14 2 L14 8 L20 8",
         };
-        try { return Geometry.FromString(path); } catch { return Geometry.FromString("M6 2 L14 2 L20 8 L20 22 L6 22 Z"); }
+        try { return (MauiShapes.Geometry)new MauiShapes.PathGeometryConverter().ConvertFromInvariantString(path); }
+        catch { return (MauiShapes.Geometry)new MauiShapes.PathGeometryConverter().ConvertFromInvariantString("M6 2 L14 2 L20 8 L20 22 L6 22 Z"); }
     }
 }
 
