@@ -16,16 +16,15 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 8.0.x
+          dotnet-version: 10.0.x
       - name: Install MAUI
         run: dotnet workload install maui-android
-      - name: Crear proyecto C# si no existe
+      - name: Recrear proyecto en .NET 10
         run: |
-          if [ ! -f "OyeEscucha/OyeEscucha.csproj" ]; then
-            dotnet new maui -n OyeEscucha -o OyeEscucha
-          fi
+          rm -rf OyeEscucha
+          dotnet new maui -n OyeEscucha -o OyeEscucha
       - name: Build APK
-        run: dotnet publish OyeEscucha/OyeEscucha.csproj -f net8.0-android -c Release -p:AndroidPackageFormat=apk
+        run: dotnet publish OyeEscucha/OyeEscucha.csproj -f net10.0-android -c Release -p:AndroidPackageFormat=apk
       - name: Subir APK
         uses: actions/upload-artifact@v4
         with:
