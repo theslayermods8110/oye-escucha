@@ -1,36 +1,100 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="OyeEscucha.MainPage">
-
+             x:Class="OyeEscucha.MainPage"
+             BackgroundColor="#0F0F0F">
     <ScrollView>
-        <VerticalStackLayout
-            Padding="30,0"
-            Spacing="25">
-            <Image
-                Source="dotnet_bot.png"
-                HeightRequest="185"
-                Aspect="AspectFit"
-                SemanticProperties.Description="dot net bot in a submarine number ten" />
+        <VerticalStackLayout Padding="20" Spacing="18">
+            <VerticalStackLayout>
+                <Label Text="Mis Archivos" FontSize="26" FontAttributes="Bold" TextColor="White"/>
+                <Label Text="Almacenamiento interno" FontSize="13" TextColor="#888888"/>
+            </VerticalStackLayout>
 
-            <Label
-                Text="Hello, World!"
-                Style="{StaticResource Headline}"
-                SemanticProperties.HeadingLevel="Level1" />
+            <Frame BackgroundColor="#1E1E1E" CornerRadius="14" Padding="12,10" HasShadow="False" BorderColor="Transparent">
+                <HorizontalStackLayout Spacing="10">
+                    <Label Text="🔍" FontSize="18" VerticalOptions="Center"/>
+                    <Entry Placeholder="Buscar archivos..." PlaceholderColor="#777777" TextColor="White" HorizontalOptions="FillAndExpand" BackgroundColor="Transparent"/>
+                </HorizontalStackLayout>
+            </Frame>
 
-            <Label
-                Text="Welcome to &#10;.NET Multi-platform App UI"
-                Style="{StaticResource SubHeadline}"
-                SemanticProperties.HeadingLevel="Level2"
-                SemanticProperties.Description="Welcome to dot net Multi platform App U I" />
+            <Frame BackgroundColor="#1E1E1E" CornerRadius="16" Padding="16" HasShadow="False" BorderColor="Transparent">
+                <VerticalStackLayout Spacing="10">
+                    <HorizontalStackLayout>
+                        <Label Text="Almacenamiento" TextColor="White" FontAttributes="Bold" FontSize="15"/>
+                        <Label Text="68% usado" TextColor="#888888" FontSize="13" HorizontalOptions="EndAndExpand"/>
+                    </HorizontalStackLayout>
+                    <ProgressBar Progress="0.68" ProgressColor="#4CAF50" HeightRequest="8"/>
+                    <Label Text="43.5 GB de 64 GB usados" TextColor="#888888" FontSize="12"/>
+                </VerticalStackLayout>
+            </Frame>
 
-            <Button
-                x:Name="CounterBtn"
-                Text="Click me" 
-                SemanticProperties.Hint="Counts the number of times you click"
-                Clicked="OnCounterClicked"
-                HorizontalOptions="Fill" />
+            <Label Text="Categorías" TextColor="White" FontAttributes="Bold" FontSize="17"/>
+            <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="10">
+                <Frame Grid.Column="0" BackgroundColor="#1E1E1E" CornerRadius="14" Padding="10" HasShadow="False" BorderColor="Transparent">
+                    <VerticalStackLayout Spacing="6" HorizontalOptions="Center">
+                        <Label Text="🖼️" FontSize="24" HorizontalOptions="Center"/>
+                        <Label Text="Imágenes" TextColor="White" FontSize="12" HorizontalOptions="Center"/>
+                        <Label Text="1,240" TextColor="#888888" FontSize="11" HorizontalOptions="Center"/>
+                    </VerticalStackLayout>
+                </Frame>
+                <Frame Grid.Column="1" BackgroundColor="#1E1E1E" CornerRadius="14" Padding="10" HasShadow="False" BorderColor="Transparent">
+                    <VerticalStackLayout Spacing="6" HorizontalOptions="Center">
+                        <Label Text="🎬" FontSize="24" HorizontalOptions="Center"/>
+                        <Label Text="Videos" TextColor="White" FontSize="12" HorizontalOptions="Center"/>
+                        <Label Text="86" TextColor="#888888" FontSize="11" HorizontalOptions="Center"/>
+                    </VerticalStackLayout>
+                </Frame>
+                <Frame Grid.Column="2" BackgroundColor="#1E1E1E" CornerRadius="14" Padding="10" HasShadow="False" BorderColor="Transparent">
+                    <VerticalStackLayout Spacing="6" HorizontalOptions="Center">
+                        <Label Text="🎵" FontSize="24" HorizontalOptions="Center"/>
+                        <Label Text="Música" TextColor="White" FontSize="12" HorizontalOptions="Center"/>
+                        <Label Text="342" TextColor="#888888" FontSize="11" HorizontalOptions="Center"/>
+                    </VerticalStackLayout>
+                </Frame>
+                <Frame Grid.Column="3" BackgroundColor="#1E1E1E" CornerRadius="14" Padding="10" HasShadow="False" BorderColor="Transparent">
+                    <VerticalStackLayout Spacing="6" HorizontalOptions="Center">
+                        <Label Text="📄" FontSize="24" HorizontalOptions="Center"/>
+                        <Label Text="Docs" TextColor="White" FontSize="12" HorizontalOptions="Center"/>
+                        <Label Text="58" TextColor="#888888" FontSize="11" HorizontalOptions="Center"/>
+                    </VerticalStackLayout>
+                </Frame>
+            </Grid>
+
+            <Label Text="Carpetas" TextColor="White" FontAttributes="Bold" FontSize="17"/>
+            <VerticalStackLayout Spacing="10">
+                <Frame BackgroundColor="#1E1E1E" CornerRadius="14" Padding="14" HasShadow="False" BorderColor="Transparent">
+                    <HorizontalStackLayout Spacing="12">
+                        <Label Text="📁" FontSize="26" VerticalOptions="Center"/>
+                        <VerticalStackLayout>
+                            <Label Text="Descargas" TextColor="White" FontSize="15" FontAttributes="Bold"/>
+                            <Label Text="128 archivos • 2.4 GB" TextColor="#888888" FontSize="12"/>
+                        </VerticalStackLayout>
+                        <Label Text="›" TextColor="#777777" FontSize="22" HorizontalOptions="EndAndExpand" VerticalOptions="Center"/>
+                    </HorizontalStackLayout>
+                </Frame>
+                <Frame BackgroundColor="#1E1E1E" CornerRadius="14" Padding="14" HasShadow="False" BorderColor="Transparent">
+                    <HorizontalStackLayout Spacing="12">
+                        <Label Text="📁" FontSize="26" VerticalOptions="Center"/>
+                        <VerticalStackLayout>
+                            <Label Text="WhatsApp" TextColor="White" FontSize="15" FontAttributes="Bold"/>
+                            <Label Text="845 archivos • 5.1 GB" TextColor="#888888" FontSize="12"/>
+                        </VerticalStackLayout>
+                        <Label Text="›" TextColor="#777777" FontSize="22" HorizontalOptions="EndAndExpand" VerticalOptions="Center"/>
+                    </HorizontalStackLayout>
+                </Frame>
+                <Frame BackgroundColor="#1E1E1E" CornerRadius="14" Padding="14" HasShadow="False" BorderColor="Transparent">
+                    <HorizontalStackLayout Spacing="12">
+                        <Label Text="📁" FontSize="26" VerticalOptions="Center"/>
+                        <VerticalStackLayout>
+                            <Label Text="OYE-ESCUCHA" TextColor="White" FontSize="15" FontAttributes="Bold"/>
+                            <Label Text="12 archivos • 340 MB" TextColor="#888888" FontSize="12"/>
+                        </VerticalStackLayout>
+                        <Label Text="›" TextColor="#777777" FontSize="22" HorizontalOptions="EndAndExpand" VerticalOptions="Center"/>
+                    </HorizontalStackLayout>
+                </Frame>
+            </VerticalStackLayout>
+
+            <Button Text="+ Nueva Carpeta" BackgroundColor="#4CAF50" TextColor="White" FontAttributes="Bold" CornerRadius="14" HeightRequest="50"/>
         </VerticalStackLayout>
     </ScrollView>
-
 </ContentPage>
