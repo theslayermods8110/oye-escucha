@@ -1,1 +1,18 @@
-
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="OyeEscucha.LanguagePage"
+             BackgroundColor="#80000000">
+    <Grid VerticalOptions="End">
+        <Border BackgroundColor="#1E1E1E" StrokeShape="RoundRectangle 24,24,0,0" Stroke="Transparent" Padding="20">
+            <VerticalStackLayout Spacing="12">
+                <Label Text="Elige tu idioma" FontSize="20" FontAttributes="Bold" TextColor="#7EC8FF" HorizontalOptions="Center"/>
+                <Label Text="Choose your language" FontSize="13" TextColor="#7EC8FF" Opacity="0.6" HorizontalOptions="Center"/>
+                <Button Text="Español" BackgroundColor="#2196F3" TextColor="White" CornerRadius="16" FontAttributes="Bold" Padding="10,14" Clicked="OnSpanish"/>
+                <Button Text="English" BackgroundColor="#333" TextColor="#7EC8FF" CornerRadius="16" FontAttributes="Bold" Padding="10,14" Clicked="OnEnglish"/>
+                <Button Text="Français" BackgroundColor="#333" TextColor="#7EC8FF" CornerRadius="16" FontAttributes="Bold" Padding="10,14" Clicked="OnFrench"/>
+                <Button Text="Kreyòl" BackgroundColor="#333" TextColor="#7EC8FF" CornerRadius="16" FontAttributes="Bold" Padding="10,14" Clicked="OnCreole"/>
+            </VerticalStackLayout>
+        </Border>
+    </Grid>
+</ContentPage>
