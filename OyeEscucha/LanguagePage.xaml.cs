@@ -10,8 +10,8 @@ public partial class LanguagePage : ContentPage
         tcs.TrySetResult(lang);
         await Navigation.PopModalAsync();
     }
-    private void OnSpanish(object s, EventArgs e) => Close("es");
-    private void OnEnglish(object s, EventArgs e) => Close("en");
-    private void OnFrench(object s, EventArgs e) => Close("fr");
-    private void OnCreole(object s, EventArgs e) => Close("ht");
+    private void OnSpanish(object? s, EventArgs e) => Close("es");
+    private void OnEnglish(object? s, EventArgs e) => Close("en");
+    private void OnFrench(object? s, EventArgs e) => Close("fr");
+    private void OnCreole(object? s, EventArgs e) => Close("ht");
 }
