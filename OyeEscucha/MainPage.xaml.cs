@@ -13,6 +13,10 @@ public class FileItem
     public MauiShapes.Geometry IconGeometry { get; set; }
     public string Info { get; set; } = "";
     public bool IsFolder { get; set; }
+    public ImageSource ApkIcon { get; set; }
+    public bool HasApkIcon { get; set; } = false;
+    public bool ShowDefaultIcon => !HasApkIcon;
+
     public static MauiShapes.Geometry GetIcon(string key)
     {
         string path = key switch
@@ -76,16 +80,30 @@ public partial class MainPage : ContentPage
         catch { }
     }
 
+    // COPIAR RUTA AL TOCARLA
+    private async void OnPathTapped(object sender, EventArgs e)
+    {
+        try
+        {
+            await Clipboard.SetTextAsync(currentPath);
+            await DisplayAlert("Copiado", currentPath, "OK");
+        }
+        catch { }
+    }
+
     private async Task AskLanguage()
     {
         try
         {
-            string res = await DisplayActionSheet("Elige tu idioma / Choose your language", "OK", null, "Espanol", "English", "Francais", "Kreyol");
-            if (res == "English") lang = "en";
-            else if (res == "Francais") lang = "fr";
-            else if (res == "Kreyol") lang = "ht";
+            var page = new LanguagePage();
+            await Navigation.PushModalAsync(page);
+            string res = await page.ResultTask;
+            if (res == "en") lang = "en";
+            else if (res == "fr") lang = "fr";
+            else if (res == "ht") lang = "ht";
             else lang = "es";
             Preferences.Set("idioma", lang);
+            ApplyLanguage();
         }
         catch { lang = "es"; }
     }
@@ -152,10 +170,35 @@ public partial class MainPage : ContentPage
 
     private async void OnChangeLangClicked(object sender, EventArgs e)
     {
-        langAsked = false;
         await AskLanguage();
-        ApplyLanguage();
         await LoadFolder(currentPath);
+    }
+
+    // SACAR ICONO REAL DEL APK
+    private (ImageSource icon, bool has) GetApkIcon(string apkPath)
+    {
+        try
+        {
+#if ANDROID
+            var activity = Platform.CurrentActivity;
+            var pm = activity.PackageManager;
+            var info = pm.GetPackageArchiveInfo(apkPath, Android.Content.PM.PackageInfoFlags.Of(0));
+            if (info?.ApplicationInfo == null) return (null, false);
+            info.ApplicationInfo.SourceDir = apkPath;
+            info.ApplicationInfo.PublicSourceDir = apkPath;
+            var drawable = info.ApplicationInfo.LoadIcon(pm);
+            if (drawable is Android.Graphics.Drawables.BitmapDrawable bd && bd.Bitmap != null)
+            {
+                var stream = new MemoryStream();
+                bd.Bitmap.Compress(Android.Graphics.Bitmap.CompressFormat.Png, 100, stream);
+                stream.Position = 0;
+                byte[] bytes = stream.ToArray();
+                return (ImageSource.FromStream(() => new MemoryStream(bytes)), true);
+            }
+#endif
+        }
+        catch { }
+        return (null, false);
     }
 
     private async Task LoadFolder(string path)
@@ -219,17 +262,18 @@ public partial class MainPage : ContentPage
                     var info = new FileInfo(file);
                     string badge = "FILE"; string color = "#607D8B";
                     string ext = Path.GetExtension(name).ToLower();
+                    ImageSource apkIcon = null; bool hasApk = false;
                     if (ext is ".jpg" or ".jpeg" or ".png" or ".webp" or ".gif") { badge = "IMG"; color = "#E91E63"; }
                     else if (ext is ".mp4" or ".mkv" or ".mov" or ".avi") { badge = "VID"; color = "#9C27B0"; }
                     else if (ext is ".mp3" or ".wav" or ".m4a" or ".ogg") { badge = "MP3"; color = "#00BCD4"; }
                     else if (ext is ".pdf") { badge = "PDF"; color = "#F44336"; }
                     else if (ext is ".doc" or ".docx") { badge = "DOC"; color = "#2196F3"; }
                     else if (ext is ".xlsx" or ".xls") { badge = "XLS"; color = "#4CAF50"; }
-                    else if (ext is ".apk") { badge = "APK"; color = "#FF9800"; }
+                    else if (ext is ".apk") { badge = "APK"; color = "#FF9800"; var r = GetApkIcon(file); apkIcon = r.icon; hasApk = r.has; if (hasApk) color = "Transparent"; }
                     else if (ext is ".zip" or ".rar" or ".7z") { badge = "ZIP"; color = "#795548"; }
                     else if (ext is ".txt" or ".json" or ".kt" or ".cs" or ".xml" or ".md" or ".log" or ".html" or ".css" or ".js" or ".py" or ".java") { badge = "TXT"; color = "#00ACC1"; }
                     string size = info.Length < 1024 ? $"{info.Length} B" : info.Length < 1024*1024 ? $"{info.Length/1024.0:F1} KB" : $"{info.Length/1024.0/1024.0:F1} MB";
-                    allItems.Add(new FileItem { Name = name, FullPath = file, BadgeText = badge, BadgeColor = color, IconGeometry = FileItem.GetIcon(badge), Info = $"{d["file"]} - {size}", IsFolder = false });
+                    allItems.Add(new FileItem { Name = name, FullPath = file, BadgeText = badge, BadgeColor = color, IconGeometry = FileItem.GetIcon(badge), Info = $"{d["file"]} - {size}", IsFolder = false, ApkIcon = apkIcon, HasApkIcon = hasApk });
                 }
                 catch { }
             }
@@ -266,28 +310,14 @@ public partial class MainPage : ContentPage
             ((CollectionView)sender).SelectedItem = null;
             if (isNavigating) return;
             if (item.IsFolder) { SearchEntry.Text = ""; await LoadFolder(item.FullPath); return; }
-
             string ext = Path.GetExtension(item.FullPath).ToLower();
-
-            // 1. EDITABLE - abre editor
             if (ext is ".txt" or ".json" or ".kt" or ".cs" or ".xml" or ".md" or ".log" or ".html" or ".css" or ".js" or ".py" or ".java" or ".kts" or ".gradle" or ".yml" or ".yaml" or ".ini" or ".csv")
             {
                 await Navigation.PushAsync(new EditorPage(item.FullPath));
                 return;
             }
-            // 2. ZIP - descomprime y entra
-            if (ext is ".zip")
-            {
-                await OpenZip(item.FullPath);
-                return;
-            }
-            // 3. APK - instalar
-            if (ext == ".apk")
-            {
-                await InstallApk(item.FullPath);
-                return;
-            }
-            // 4. TODO LO DEMAS - abrir normal
+            if (ext is ".zip") { await OpenZip(item.FullPath); return; }
+            if (ext == ".apk") { await InstallApk(item.FullPath); return; }
             try { await Launcher.OpenAsync(new OpenFileRequest { File = new ReadOnlyFile(item.FullPath) }); }
             catch { await DisplayAlert("Error", "No se pudo abrir este archivo.", "OK"); }
         }
