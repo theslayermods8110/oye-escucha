@@ -10,10 +10,10 @@ public class FileItem
     public string FullPath { get; set; } = "";
     public string BadgeText { get; set; } = "FILE";
     public string BadgeColor { get; set; } = "#607D8B";
-    public MauiShapes.Geometry IconGeometry { get; set; }
+    public MauiShapes.Geometry? IconGeometry { get; set; }
     public string Info { get; set; } = "";
     public bool IsFolder { get; set; }
-    public ImageSource ApkIcon { get; set; }
+    public ImageSource? ApkIcon { get; set; }
     public bool HasApkIcon { get; set; } = false;
     public bool ShowDefaultIcon => !HasApkIcon;
 
@@ -33,8 +33,8 @@ public class FileItem
             "TXT" => "M6 2 L18 2 L18 22 L6 22 Z M9 7 L15 7 M9 11 L15 11 M9 15 L13 15 M9 19 L13 19",
             _ => "M6 2 L14 2 L20 8 L20 22 L6 22 Z M6 2 L14 2 L14 8 L20 8",
         };
-        try { return (MauiShapes.Geometry)new MauiShapes.PathGeometryConverter().ConvertFromInvariantString(path); }
-        catch { return (MauiShapes.Geometry)new MauiShapes.PathGeometryConverter().ConvertFromInvariantString("M6 2 L14 2 L20 8 L20 22 L6 22 Z"); }
+        try { return (MauiShapes.Geometry)new MauiShapes.PathGeometryConverter().ConvertFromInvariantString(path)!; }
+        catch { return (MauiShapes.Geometry)new MauiShapes.PathGeometryConverter().ConvertFromInvariantString("M6 2 L14 2 L20 8 L20 22 L6 22 Z")!; }
     }
 }
 
@@ -80,57 +80,52 @@ public partial class MainPage : ContentPage
         catch { }
     }
 
-    private async void OnPathTapped(object sender, EventArgs e)
+    private async void OnPathTapped(object? sender, EventArgs e)
     {
         try
         {
             await Clipboard.SetTextAsync(currentPath);
-            await DisplayAlert("Copiado", currentPath, "OK");
+            await DisplayAlertAsync("Copiado", currentPath, "OK");
         }
         catch { }
     }
 
-    // CREAR CARPETA
-    private async void OnCreateFolderClicked(object sender, EventArgs e)
+    private async void OnCreateFolderClicked(object? sender, EventArgs e)
     {
         try
         {
-            string name = await DisplayPromptAsync("Crear Carpeta", "Nombre de la carpeta:", "Crear", "Cancelar", "Mi Carpeta");
+            string? name = await DisplayPromptAsync("Crear Carpeta", "Nombre de la carpeta:", "Crear", "Cancelar", "Mi Carpeta");
             if (string.IsNullOrWhiteSpace(name)) return;
             name = name.Trim();
-            // Quita caracteres que no se pueden usar
             foreach (char c in Path.GetInvalidFileNameChars()) name = name.Replace(c, '_');
             string newPath = Path.Combine(currentPath, name);
             if (Directory.Exists(newPath))
             {
-                await DisplayAlert("Aviso", "Esa carpeta ya existe.", "OK");
+                await DisplayAlertAsync("Aviso", "Esa carpeta ya existe.", "OK");
                 return;
             }
             Directory.CreateDirectory(newPath);
             await LoadFolder(currentPath);
         }
-        catch (Exception ex) { await DisplayAlert("Error", "No se pudo crear: " + ex.Message, "OK"); }
+        catch (Exception ex) { await DisplayAlertAsync("Error", "No se pudo crear: " + ex.Message, "OK"); }
     }
 
-    // CREAR ARCHIVO
-    private async void OnCreateFileClicked(object sender, EventArgs e)
+    private async void OnCreateFileClicked(object? sender, EventArgs e)
     {
         try
         {
-            string name = await DisplayPromptAsync("Crear Archivo", "Nombre del archivo (ej: nota.txt):", "Crear", "Cancelar", "nuevo.txt");
+            string? name = await DisplayPromptAsync("Crear Archivo", "Nombre del archivo (ej: nota.txt):", "Crear", "Cancelar", "nuevo.txt");
             if (string.IsNullOrWhiteSpace(name)) return;
             name = name.Trim();
             foreach (char c in Path.GetInvalidFileNameChars()) name = name.Replace(c, '_');
-            // Si no tiene extension, le pone .txt
             if (string.IsNullOrEmpty(Path.GetExtension(name))) name += ".txt";
             string newPath = Path.Combine(currentPath, name);
             if (File.Exists(newPath))
             {
-                await DisplayAlert("Aviso", "Ese archivo ya existe.", "OK");
+                await DisplayAlertAsync("Aviso", "Ese archivo ya existe.", "OK");
                 return;
             }
             File.WriteAllText(newPath, "");
-            // Si es editable, lo abre directo en el editor
             string ext = Path.GetExtension(newPath).ToLower();
             if (ext is ".txt" or ".json" or ".kt" or ".cs" or ".xml" or ".md" or ".log" or ".html" or ".css" or ".js" or ".py" or ".java")
             {
@@ -138,7 +133,7 @@ public partial class MainPage : ContentPage
             }
             await LoadFolder(currentPath);
         }
-        catch (Exception ex) { await DisplayAlert("Error", "No se pudo crear: " + ex.Message, "OK"); }
+        catch (Exception ex) { await DisplayAlertAsync("Error", "No se pudo crear: " + ex.Message, "OK"); }
     }
 
     private async Task AskLanguage()
@@ -180,7 +175,7 @@ public partial class MainPage : ContentPage
         {
 #if ANDROID
             bool hasAll = false;
-            try { hasAll = Android.OS.Environment.IsExternalStorageManager; } catch { hasAll = false; }
+            try { if (OperatingSystem.IsAndroidVersionAtLeast(30)) hasAll = Android.OS.Environment.IsExternalStorageManager; } catch { hasAll = false; }
             PermissionBtn.IsVisible = !hasAll;
 #else
             PermissionBtn.IsVisible = false;
@@ -189,7 +184,7 @@ public partial class MainPage : ContentPage
         catch { PermissionBtn.IsVisible = false; }
     }
 
-    private async void OnPermissionClicked(object sender, EventArgs e)
+    private async void OnPermissionClicked(object? sender, EventArgs e)
     {
         try
         {
@@ -209,7 +204,7 @@ public partial class MainPage : ContentPage
                 }
                 catch { try { AppInfo.ShowSettingsUI(); } catch { } }
             });
-            await DisplayAlert("Permiso", "Activa 'Permitir acceso a todos los archivos' y vuelve atras.", "OK");
+            await DisplayAlertAsync("Permiso", "Activa 'Permitir acceso a todos los archivos' y vuelve atras.", "OK");
 #endif
         }
         catch { }
@@ -218,20 +213,20 @@ public partial class MainPage : ContentPage
         await LoadFolder(currentPath);
     }
 
-    private async void OnChangeLangClicked(object sender, EventArgs e)
+    private async void OnChangeLangClicked(object? sender, EventArgs e)
     {
         await AskLanguage();
         await LoadFolder(currentPath);
     }
 
-    private (ImageSource icon, bool has) GetApkIcon(string apkPath)
+    private (ImageSource? icon, bool has) GetApkIcon(string apkPath)
     {
         try
         {
 #if ANDROID
             var activity = Platform.CurrentActivity;
-            var pm = activity.PackageManager;
-            var info = pm.GetPackageArchiveInfo(apkPath, Android.Content.PM.PackageInfoFlags.Of(0));
+            var pm = activity!.PackageManager;
+            var info = pm!.GetPackageArchiveInfo(apkPath, Android.Content.PM.PackageInfoFlags.Of(0));
             if (info?.ApplicationInfo == null) return (null, false);
             info.ApplicationInfo.SourceDir = apkPath;
             info.ApplicationInfo.PublicSourceDir = apkPath;
@@ -311,7 +306,7 @@ public partial class MainPage : ContentPage
                     var info = new FileInfo(file);
                     string badge = "FILE"; string color = "#607D8B";
                     string ext = Path.GetExtension(name).ToLower();
-                    ImageSource apkIcon = null; bool hasApk = false;
+                    ImageSource? apkIcon = null; bool hasApk = false;
                     if (ext is ".jpg" or ".jpeg" or ".png" or ".webp" or ".gif") { badge = "IMG"; color = "#E91E63"; }
                     else if (ext is ".mp4" or ".mkv" or ".mov" or ".avi") { badge = "VID"; color = "#9C27B0"; }
                     else if (ext is ".mp3" or ".wav" or ".m4a" or ".ogg") { badge = "MP3"; color = "#00BCD4"; }
@@ -349,14 +344,14 @@ public partial class MainPage : ContentPage
         catch { }
     }
 
-    private void OnSearchChanged(object sender, TextChangedEventArgs e) => RefreshList(e.NewTextValue ?? "");
+    private void OnSearchChanged(object? sender, TextChangedEventArgs e) => RefreshList(e.NewTextValue ?? "");
 
-    private async void OnFileSelected(object sender, SelectionChangedEventArgs e)
+    private async void OnFileSelected(object? sender, SelectionChangedEventArgs e)
     {
         try
         {
             if (e.CurrentSelection.FirstOrDefault() is not FileItem item) return;
-            ((CollectionView)sender).SelectedItem = null;
+            ((CollectionView)sender!).SelectedItem = null;
             if (isNavigating) return;
             if (item.IsFolder) { SearchEntry.Text = ""; await LoadFolder(item.FullPath); return; }
             string ext = Path.GetExtension(item.FullPath).ToLower();
@@ -368,7 +363,7 @@ public partial class MainPage : ContentPage
             if (ext is ".zip") { await OpenZip(item.FullPath); return; }
             if (ext == ".apk") { await InstallApk(item.FullPath); return; }
             try { await Launcher.OpenAsync(new OpenFileRequest { File = new ReadOnlyFile(item.FullPath) }); }
-            catch { await DisplayAlert("Error", "No se pudo abrir este archivo.", "OK"); }
+            catch { await DisplayAlertAsync("Error", "No se pudo abrir este archivo.", "OK"); }
         }
         catch { }
     }
@@ -387,7 +382,7 @@ public partial class MainPage : ContentPage
             SearchEntry.Text = "";
             await LoadFolder(dest);
         }
-        catch (Exception ex) { await DisplayAlert("ZIP", "No se pudo abrir: " + ex.Message, "OK"); }
+        catch (Exception ex) { await DisplayAlertAsync("ZIP", "No se pudo abrir: " + ex.Message, "OK"); }
     }
 
     private async Task InstallApk(string apkPath)
@@ -401,7 +396,7 @@ public partial class MainPage : ContentPage
                 {
                     var activity = Platform.CurrentActivity;
                     var file = new Java.IO.File(apkPath);
-                    var uri = AndroidX.Core.Content.FileProvider.GetUriForFile(activity, activity.PackageName + ".provider", file);
+                    var uri = AndroidX.Core.Content.FileProvider.GetUriForFile(activity!, activity!.PackageName + ".provider", file);
                     var intent = new Android.Content.Intent(Android.Content.Intent.ActionView);
                     intent.SetDataAndType(uri, "application/vnd.android.package-archive");
                     intent.AddFlags(Android.Content.ActivityFlags.GrantReadUriPermission);
@@ -414,13 +409,13 @@ public partial class MainPage : ContentPage
             await Launcher.OpenAsync(new OpenFileRequest { File = new ReadOnlyFile(apkPath) });
 #endif
         }
-        catch { await DisplayAlert("APK", "No se pudo instalar. Dale permiso de 'Instalar apps desconocidas' a esta app.", "OK"); }
+        catch { await DisplayAlertAsync("APK", "No se pudo instalar. Dale permiso de 'Instalar apps desconocidas' a esta app.", "OK"); }
     }
 
-    private async void OnBackClicked(object sender, EventArgs e)
+    private async void OnBackClicked(object? sender, EventArgs e)
     {
         try { var parent = Directory.GetParent(currentPath); if (parent != null) await LoadFolder(parent.FullName); } catch { }
     }
-    private async void OnHomeClicked(object sender, EventArgs e) => await LoadFolder("/storage/emulated/0");
-    private async void OnRefreshClicked(object sender, EventArgs e) => await LoadFolder(currentPath);
+    private async void OnHomeClicked(object? sender, EventArgs e) => await LoadFolder("/storage/emulated/0");
+    private async void OnRefreshClicked(object? sender, EventArgs e) => await LoadFolder(currentPath);
 }
