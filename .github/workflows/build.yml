@@ -1,1 +1,28 @@
-
+name: Build OYE-ESCUCHA APK
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - name: Install MAUI
+        run: dotnet workload install maui
+      - name: Crear proyecto C# si no existe
+        run: |
+          if [ ! -f "OyeEscucha/OyeEscucha.csproj" ]; then
+            dotnet new maui -n OyeEscucha -o OyeEscucha
+          fi
+      - name: Build APK
+        run: dotnet build OyeEscucha/OyeEscucha.csproj -f net8.0-android -c Release
+      - name: Subir APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: oye-escucha-apk
+          path: '**/*.apk'
