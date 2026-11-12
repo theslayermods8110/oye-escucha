@@ -3,98 +3,43 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="OyeEscucha.MainPage"
              BackgroundColor="#0F0F0F">
-    <ScrollView>
-        <VerticalStackLayout Padding="20" Spacing="18">
-            <VerticalStackLayout>
-                <Label Text="Mis Archivos" FontSize="26" FontAttributes="Bold" TextColor="White"/>
-                <Label Text="Almacenamiento interno" FontSize="13" TextColor="#888888"/>
-            </VerticalStackLayout>
+    <VerticalStackLayout Padding="16" Spacing="12">
+        <Label Text="Mis Archivos" FontSize="26" FontAttributes="Bold" TextColor="White"/>
+        <Label x:Name="PathLabel" Text="/storage" FontSize="12" TextColor="#888888"/>
 
-            <Frame BackgroundColor="#1E1E1E" CornerRadius="14" Padding="12,10" HasShadow="False" BorderColor="Transparent">
-                <HorizontalStackLayout Spacing="10">
-                    <Label Text="🔍" FontSize="18" VerticalOptions="Center"/>
-                    <Entry Placeholder="Buscar archivos..." PlaceholderColor="#777777" TextColor="White" HorizontalOptions="FillAndExpand" BackgroundColor="Transparent"/>
-                </HorizontalStackLayout>
-            </Frame>
+        <Frame BackgroundColor="#1E1E1E" CornerRadius="14" Padding="12,8" HasShadow="False" BorderColor="Transparent">
+            <HorizontalStackLayout Spacing="10">
+                <Label Text="🔍" FontSize="18" VerticalOptions="Center"/>
+                <Entry x:Name="SearchEntry" Placeholder="Buscar archivos de verdad..." PlaceholderColor="#777777" TextColor="White" HorizontalOptions="FillAndExpand" BackgroundColor="Transparent" TextChanged="OnSearchChanged"/>
+            </HorizontalStackLayout>
+        </Frame>
 
-            <Frame BackgroundColor="#1E1E1E" CornerRadius="16" Padding="16" HasShadow="False" BorderColor="Transparent">
-                <VerticalStackLayout Spacing="10">
-                    <HorizontalStackLayout>
-                        <Label Text="Almacenamiento" TextColor="White" FontAttributes="Bold" FontSize="15"/>
-                        <Label Text="68% usado" TextColor="#888888" FontSize="13" HorizontalOptions="EndAndExpand"/>
-                    </HorizontalStackLayout>
-                    <ProgressBar Progress="0.68" ProgressColor="#4CAF50" HeightRequest="8"/>
-                    <Label Text="43.5 GB de 64 GB usados" TextColor="#888888" FontSize="12"/>
-                </VerticalStackLayout>
-            </Frame>
+        <HorizontalStackLayout Spacing="10">
+            <Button x:Name="BackBtn" Text="⬅ Atrás" BackgroundColor="#333" TextColor="White" CornerRadius="12" Clicked="OnBackClicked"/>
+            <Button Text="🏠 Inicio" BackgroundColor="#333" TextColor="White" CornerRadius="12" Clicked="OnHomeClicked"/>
+            <Button Text="🔄 Recargar" BackgroundColor="#4CAF50" TextColor="White" CornerRadius="12" Clicked="OnRefreshClicked"/>
+        </HorizontalStackLayout>
 
-            <Label Text="Categorías" TextColor="White" FontAttributes="Bold" FontSize="17"/>
-            <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="10">
-                <Frame Grid.Column="0" BackgroundColor="#1E1E1E" CornerRadius="14" Padding="10" HasShadow="False" BorderColor="Transparent">
-                    <VerticalStackLayout Spacing="6" HorizontalOptions="Center">
-                        <Label Text="🖼️" FontSize="24" HorizontalOptions="Center"/>
-                        <Label Text="Imágenes" TextColor="White" FontSize="12" HorizontalOptions="Center"/>
-                        <Label Text="1,240" TextColor="#888888" FontSize="11" HorizontalOptions="Center"/>
-                    </VerticalStackLayout>
-                </Frame>
-                <Frame Grid.Column="1" BackgroundColor="#1E1E1E" CornerRadius="14" Padding="10" HasShadow="False" BorderColor="Transparent">
-                    <VerticalStackLayout Spacing="6" HorizontalOptions="Center">
-                        <Label Text="🎬" FontSize="24" HorizontalOptions="Center"/>
-                        <Label Text="Videos" TextColor="White" FontSize="12" HorizontalOptions="Center"/>
-                        <Label Text="86" TextColor="#888888" FontSize="11" HorizontalOptions="Center"/>
-                    </VerticalStackLayout>
-                </Frame>
-                <Frame Grid.Column="2" BackgroundColor="#1E1E1E" CornerRadius="14" Padding="10" HasShadow="False" BorderColor="Transparent">
-                    <VerticalStackLayout Spacing="6" HorizontalOptions="Center">
-                        <Label Text="🎵" FontSize="24" HorizontalOptions="Center"/>
-                        <Label Text="Música" TextColor="White" FontSize="12" HorizontalOptions="Center"/>
-                        <Label Text="342" TextColor="#888888" FontSize="11" HorizontalOptions="Center"/>
-                    </VerticalStackLayout>
-                </Frame>
-                <Frame Grid.Column="3" BackgroundColor="#1E1E1E" CornerRadius="14" Padding="10" HasShadow="False" BorderColor="Transparent">
-                    <VerticalStackLayout Spacing="6" HorizontalOptions="Center">
-                        <Label Text="📄" FontSize="24" HorizontalOptions="Center"/>
-                        <Label Text="Docs" TextColor="White" FontSize="12" HorizontalOptions="Center"/>
-                        <Label Text="58" TextColor="#888888" FontSize="11" HorizontalOptions="Center"/>
-                    </VerticalStackLayout>
-                </Frame>
-            </Grid>
+        <Label x:Name="StatusLabel" Text="Cargando..." TextColor="#888888" FontSize="13"/>
 
-            <Label Text="Carpetas" TextColor="White" FontAttributes="Bold" FontSize="17"/>
-            <VerticalStackLayout Spacing="10">
-                <Frame BackgroundColor="#1E1E1E" CornerRadius="14" Padding="14" HasShadow="False" BorderColor="Transparent">
-                    <HorizontalStackLayout Spacing="12">
-                        <Label Text="📁" FontSize="26" VerticalOptions="Center"/>
-                        <VerticalStackLayout>
-                            <Label Text="Descargas" TextColor="White" FontSize="15" FontAttributes="Bold"/>
-                            <Label Text="128 archivos • 2.4 GB" TextColor="#888888" FontSize="12"/>
-                        </VerticalStackLayout>
-                        <Label Text="›" TextColor="#777777" FontSize="22" HorizontalOptions="EndAndExpand" VerticalOptions="Center"/>
-                    </HorizontalStackLayout>
-                </Frame>
-                <Frame BackgroundColor="#1E1E1E" CornerRadius="14" Padding="14" HasShadow="False" BorderColor="Transparent">
-                    <HorizontalStackLayout Spacing="12">
-                        <Label Text="📁" FontSize="26" VerticalOptions="Center"/>
-                        <VerticalStackLayout>
-                            <Label Text="WhatsApp" TextColor="White" FontSize="15" FontAttributes="Bold"/>
-                            <Label Text="845 archivos • 5.1 GB" TextColor="#888888" FontSize="12"/>
-                        </VerticalStackLayout>
-                        <Label Text="›" TextColor="#777777" FontSize="22" HorizontalOptions="EndAndExpand" VerticalOptions="Center"/>
-                    </HorizontalStackLayout>
-                </Frame>
-                <Frame BackgroundColor="#1E1E1E" CornerRadius="14" Padding="14" HasShadow="False" BorderColor="Transparent">
-                    <HorizontalStackLayout Spacing="12">
-                        <Label Text="📁" FontSize="26" VerticalOptions="Center"/>
-                        <VerticalStackLayout>
-                            <Label Text="OYE-ESCUCHA" TextColor="White" FontSize="15" FontAttributes="Bold"/>
-                            <Label Text="12 archivos • 340 MB" TextColor="#888888" FontSize="12"/>
-                        </VerticalStackLayout>
-                        <Label Text="›" TextColor="#777777" FontSize="22" HorizontalOptions="EndAndExpand" VerticalOptions="Center"/>
-                    </HorizontalStackLayout>
-                </Frame>
-            </VerticalStackLayout>
-
-            <Button Text="+ Nueva Carpeta" BackgroundColor="#4CAF50" TextColor="White" FontAttributes="Bold" CornerRadius="14" HeightRequest="50"/>
-        </VerticalStackLayout>
-    </ScrollView>
+        <CollectionView x:Name="FilesList" SelectionMode="Single" SelectionChanged="OnFileSelected">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame BackgroundColor="#1E1E1E" CornerRadius="14" Padding="14" HasShadow="False" BorderColor="Transparent" Margin="0,0,0,8">
+                        <HorizontalStackLayout Spacing="12">
+                            <Label Text="{Binding Icon}" FontSize="26" VerticalOptions="Center"/>
+                            <VerticalStackLayout VerticalOptions="Center">
+                                <Label Text="{Binding Name}" TextColor="White" FontSize="15" FontAttributes="Bold" LineBreakMode="TailTruncation"/>
+                                <Label Text="{Binding Info}" TextColor="#888888" FontSize="12"/>
+                            </VerticalStackLayout>
+                            <Label Text="›" TextColor="#777777" FontSize="22" HorizontalOptions="EndAndExpand" VerticalOptions="Center"/>
+                        </HorizontalStackLayout>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+            <CollectionView.EmptyView>
+                <Label Text="No hay archivos aquí o sin permiso. Dale a Recargar y acepta el permiso." TextColor="#888" HorizontalOptions="Center" Margin="0,40,0,0"/>
+            </CollectionView.EmptyView>
+        </CollectionView>
+    </VerticalStackLayout>
 </ContentPage>
