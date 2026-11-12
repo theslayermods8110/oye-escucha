@@ -9,27 +9,27 @@ public class FileItem
     public string FullPath { get; set; } = "";
     public string Info { get; set; } = "";
     public bool IsFolder { get; set; }
-    // ICONO BUENA CALIDAD - Imagen de Flaticon / Icons8, no Path feo
-    public string IconImage { get; set; } = "ic_file.png";
+    // ICONOS POR LINK - Icons8 te presta la imagen, no hay que subir PNG
+    public string IconImage { get; set; } = "https://img.icons8.com/3d-fluency/94/file.png";
     public ImageSource? ApkIcon { get; set; }
     public bool HasApkIcon { get; set; } = false;
     public bool ShowDefaultIcon => !HasApkIcon;
 
     public static string GetIconImage(string ext, bool isFolder)
     {
-        if (isFolder) return "ic_folder.png";
+        if (isFolder) return "https://img.icons8.com/3d-fluency/94/folder-invoices.png";
         return ext switch
         {
-            ".jpg" or ".jpeg" or ".png" or ".webp" or ".gif" => "ic_image.png",
-            ".mp4" or ".mkv" or ".mov" or ".avi" => "ic_video.png",
-            ".mp3" or ".wav" or ".m4a" or ".ogg" => "ic_music.png",
-            ".pdf" => "ic_pdf.png",
-            ".doc" or ".docx" => "ic_doc.png",
-            ".xlsx" or ".xls" => "ic_xls.png",
-            ".apk" => "ic_apk.png",
-            ".zip" or ".rar" or ".7z" => "ic_zip.png",
-            ".txt" or ".json" or ".kt" or ".cs" or ".xml" or ".md" or ".log" or ".html" or ".css" or ".js" or ".py" or ".java" => "ic_text.png",
-            _ => "ic_file.png",
+            ".jpg" or ".jpeg" or ".png" or ".webp" or ".gif" => "https://img.icons8.com/3d-fluency/94/image.png",
+            ".mp4" or ".mkv" or ".mov" or ".avi" => "https://img.icons8.com/3d-fluency/94/video.png",
+            ".mp3" or ".wav" or ".m4a" or ".ogg" => "https://img.icons8.com/3d-fluency/94/music.png",
+            ".pdf" => "https://img.icons8.com/3d-fluency/94/pdf.png",
+            ".doc" or ".docx" => "https://img.icons8.com/3d-fluency/94/document.png",
+            ".xlsx" or ".xls" => "https://img.icons8.com/3d-fluency/94/spreadsheet.png",
+            ".apk" => "https://img.icons8.com/3d-fluency/94/android.png",
+            ".zip" or ".rar" or ".7z" => "https://img.icons8.com/3d-fluency/94/zip.png",
+            ".txt" or ".json" or ".kt" or ".cs" or ".xml" or ".md" or ".log" or ".html" or ".css" or ".js" or ".py" or ".java" => "https://img.icons8.com/3d-fluency/94/text.png",
+            _ => "https://img.icons8.com/3d-fluency/94/file.png",
         };
     }
 }
@@ -64,7 +64,6 @@ public partial class MainPage : ContentPage
         FilesList.ItemsSource = visibleItems;
         try { lang = Preferences.Get("idioma", "es"); } catch { lang = "es"; }
         if (string.IsNullOrEmpty(lang)) lang = "es";
-        // Cargar privacidad guardada
         try { mostrarOcultos = Preferences.Get("mostrarOcultos", false); } catch {}
         try { mostrarTamano = Preferences.Get("mostrarTamano", true); } catch {}
         try { buscarActivo = Preferences.Get("buscarActivo", true); } catch {}
@@ -72,7 +71,7 @@ public partial class MainPage : ContentPage
         ApplyTheme();
     }
 
-    // ===== TEMA SOL / LUNA =====
+    // ===== TEMA SOL / LUNA EN VECTOR - LOS DE ANTES =====
     private void OnThemeClicked(object sender, TappedEventArgs e)
     {
         try
@@ -115,20 +114,20 @@ public partial class MainPage : ContentPage
         catch { }
     }
 
-    // ===== ••• MENU =====
+    // ===== MENU ••• - SIN EMOJI =====
     private async void OnMenuClicked(object sender, EventArgs e)
     {
-        string? res = await DisplayActionSheet("¿Qué quieres hacer?", "Cancelar", null,
-            "🔍 Buscar", "+ Crear Carpeta", "+ Crear Archivo", "🧩 Plugins", "🔒 Privacidad");
-        if (res == "🔍 Buscar")
+        string? res = await DisplayActionSheet("Que quieres hacer?", "Cancelar", null,
+            "Buscar", "Crear Carpeta", "Crear Archivo", "Plugins", "Privacidad");
+        if (res == "Buscar")
         {
-            if (!buscarActivo) { await MostrarAlertaModerna("Buscar desactivado", "Actívalo en Privacidad"); return; }
+            if (!buscarActivo) { await MostrarAlertaModerna("Buscar desactivado", "Activalo en Privacidad"); return; }
             SearchBox.IsVisible = true; SearchEntry.Focus();
         }
-        else if (res == "+ Crear Carpeta") OnCreateFolderClicked(sender, e);
-        else if (res == "+ Crear Archivo") OnCreateFileClicked(sender, e);
-        else if (res == "🧩 Plugins") MostrarPlugins();
-        else if (res == "🔒 Privacidad") MostrarPrivacidad();
+        else if (res == "Crear Carpeta") OnCreateFolderClicked(sender, e);
+        else if (res == "Crear Archivo") OnCreateFileClicked(sender, e);
+        else if (res == "Plugins") MostrarPlugins();
+        else if (res == "Privacidad") MostrarPrivacidad();
     }
     private void OnCloseSearchClicked(object sender, EventArgs e)
     {
@@ -158,12 +157,12 @@ public partial class MainPage : ContentPage
         await MostrarDialogoModerno(titulo, mensaje, "", false);
     }
 
-    // ===== PLUGINS =====
+    // ===== PLUGINS - SIN EMOJI =====
     private async void MostrarPlugins()
     {
-        if (!pluginsActivo) { await MostrarAlertaModerna("Plugins desactivados", "Actívalos en Privacidad"); return; }
+        if (!pluginsActivo) { await MostrarAlertaModerna("Plugins desactivados", "Activalos en Privacidad"); return; }
         string? res = await DisplayActionSheet("Plugins", "Cerrar", null,
-            "Visor de Imágenes", "Reproductor de Música", "Editor de Texto", "Comprimir ZIP");
+            "Visor de Imagenes", "Reproductor de Musica", "Editor de Texto", "Comprimir ZIP");
         if (res != null && res != "Cerrar") await MostrarAlertaModerna("Guardado", $"Plugin activado: {res}");
     }
 
@@ -171,13 +170,13 @@ public partial class MainPage : ContentPage
     private async void MostrarPrivacidad()
     {
         string? res = await DisplayActionSheet("Privacidad - Toca para activar / desactivar", "Cerrar", null,
-            $"Mostrar ocultos: {(mostrarOcultos ? "ON ✓" : "OFF")}",
-            $"Mostrar tamaño: {(mostrarTamano ? "ON ✓" : "OFF")}",
-            $"Buscar: {(buscarActivo ? "ON ✓" : "OFF")}",
-            $"Plugins: {(pluginsActivo ? "ON ✓" : "OFF")}");
+            $"Mostrar ocultos: {(mostrarOcultos ? "ON" : "OFF")}",
+            $"Mostrar tamano: {(mostrarTamano ? "ON" : "OFF")}",
+            $"Buscar: {(buscarActivo ? "ON" : "OFF")}",
+            $"Plugins: {(pluginsActivo ? "ON" : "OFF")}");
         if (res == null || res == "Cerrar") return;
         if (res.Contains("ocultos")) { mostrarOcultos = !mostrarOcultos; Preferences.Set("mostrarOcultos", mostrarOcultos); }
-        if (res.Contains("tamaño")) { mostrarTamano = !mostrarTamano; Preferences.Set("mostrarTamano", mostrarTamano); }
+        if (res.Contains("tamano")) { mostrarTamano = !mostrarTamano; Preferences.Set("mostrarTamano", mostrarTamano); }
         if (res.Contains("Buscar")) { buscarActivo = !buscarActivo; Preferences.Set("buscarActivo", buscarActivo); }
         if (res.Contains("Plugins")) { pluginsActivo = !pluginsActivo; Preferences.Set("pluginsActivo", pluginsActivo); }
         await LoadFolder(currentPath);
@@ -201,7 +200,7 @@ public partial class MainPage : ContentPage
             if (Directory.Exists(newPath)) { await MostrarAlertaModerna("Aviso", "Esa carpeta ya existe."); return; }
             Directory.CreateDirectory(newPath);
             await LoadFolder(currentPath);
-            await MostrarAlertaModerna("Guardado", $"Carpeta \"{name}\" creada con éxito");
+            await MostrarAlertaModerna("Guardado", $"Carpeta \"{name}\" creada con exito");
         }
         catch (Exception ex) { await MostrarAlertaModerna("Error", "No se pudo crear: " + ex.Message); }
     }
@@ -222,7 +221,7 @@ public partial class MainPage : ContentPage
             if (ext is ".txt" or ".json" or ".kt" or ".cs" or ".xml" or ".md" or ".log" or ".html" or ".css" or ".js" or ".py" or ".java")
                 await Navigation.PushAsync(new EditorPage(newPath));
             await LoadFolder(currentPath);
-            await MostrarAlertaModerna("Guardado", $"Archivo \"{name}\" creado con éxito");
+            await MostrarAlertaModerna("Guardado", $"Archivo \"{name}\" creado con exito");
         }
         catch (Exception ex) { await MostrarAlertaModerna("Error", "No se pudo crear: " + ex.Message); }
     }
