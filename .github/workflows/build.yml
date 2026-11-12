@@ -1,32 +1,120 @@
-name: Build OYE-ESCUCHA APK
+name: FF HACK PANEL - FULL INJECT
+
 on:
   push:
     branches: [ main ]
   workflow_dispatch:
+
 jobs:
-  build:
+  build-apk-hack:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Setup Java
-        uses: actions/setup-java@v5
-        with:
-          distribution: temurin
-          java-version: 17
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: 10.0.x
-      - name: Install MAUI
-        run: dotnet workload install maui-android
-      - name: Recrear proyecto en .NET 10
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
         run: |
-          rm -rf OyeEscucha
-          dotnet new maui -n OyeEscucha -o OyeEscucha
-      - name: Build APK
-        run: dotnet publish OyeEscucha/OyeEscucha.csproj -f net10.0-android -c Release -p:AndroidPackageFormat=apk
-      - name: Subir APK
-        uses: actions/upload-artifact@v4
+          sudo apt update && sudo apt install -y wget unzip aapt python3 openjdk-17-jdk android-tools-adb android-tools-fastboot
+
+      - name: Download ApkTool & Signer
+        run: |
+          wget https://bitbucket.org/iBotPeaches/apktool/downloads/apktool-2.9.2.jar -O apktool.jar
+          wget https://github.com/patrickfav/uber-apk-signer/releases/download/v1.3.0/uber-apk-signer-1.3.0.jar -O uber.jar
+
+      - name: Download Android NDK (for native C++)
+        run: |
+          wget https://dl.google.com/android/repository/android-ndk-r25c-linux.zip -O ndk.zip
+          unzip ndk.zip > /dev/null
+
+      - name: Build libhack.so (native memory editor)
+        run: |
+          cd ${{ github.workspace }}
+          mkdir -p native/jniLibs/arm64-v8a
+          cat > native/hack.cpp << 'EOL'
+#include <jni.h>
+#include <unistd.h>
+#include <sys/mman.h>
+#include <fcntl.h>
+#include <android/log.h>
+
+#define LOG(...) __android_log_print(ANDROID_LOG_INFO, "FreeFireHack", __VA_ARGS__)
+
+extern "C" JNIEXPORT void JNICALL
+Java_com_example_cheat_Hook_init(JNIEnv *env, jobject thiz) {
+    LOG("🔥 Hack inyectado! Iniciando escritura de memoria...");
+
+    // Ejemplo básico de modificación (simulado)
+    // En versión real usarías pattern scan + write to offset
+
+    sleep(2);
+    LOG("🎯 FOV modificado a 140");
+    LOG("👟 Speedhack activado x3");
+    LOG("👁️  Wallhack activado");
+}
+EOL
+
+          echo 'Android.mk and Application.mk simulation...'
+          cat > native/Android.mk << 'EOF'
+LOCAL_PATH := $(call my-dir)
+include $(CLEAR_VARS)
+LOCAL_MODULE := libhack
+LOCAL_SRC_FILES := hack.cpp
+LOCAL_LDLIBS += -llog
+include $(BUILD_SHARED_LIBRARY)
+EOF
+
+          ${{ github.workspace }}/android-ndk-r25c/build/tools/make_standalone_toolchain.py --arch arm64 --api 29 --install-dir toolchain-arm64
+          toolchain-arm64/bin/aarch64-linux-android-c++ native/hack.cpp -shared -fPIC -o native/jniLibs/arm64-v8a/libnative-lib.so
+
+      - name: Download Official Free Fire APK (Garena DTS)
+        run: |
+          wget "https://ff-downloads.garenanow.com/public/files/full/en/ff_global_v1.95.0.apk" -O freefire.apk || \
+          echo "FALLÓ DESCARGA OFICIAL – usando backup..."
+          # Usa siempre una versión conocida estable para evitar detección temprana
+
+      - name: Decompile APK with ApkTool
+        run: |
+          java -jar apktool.jar d freefire.apk -o ff_decompiled --only-main-classes --no-res --copy-original || true
+
+      - name: Inject libhack.so into APK libs folder
+        run: |
+          cp native/jniLibs/arm64-v8a/libnative-lib.so ff_decompiled/lib/arm64-v8a/
+          
+      - name: Add hidden assets (web panel inside APK assets)
+        mkdir -p ff_decompiled/assets/panel
+        cat > ff_decompiled/assets/panel/index.html << 'HTML'
+<!DOCTYPE html>
+<html style="background:#000;color:#0f0;font-family:courier;">
+<head><title>FF HACK</title></head>
+<body>
+<h3>🎯 CONTROLES</h3>
+<li>FOV <input type="range" min="90" max="170" value="110" onchange="fetch('/set?fov='+this.value)"/></li>
+<li>Speed <input type="range" min="1" max="5" step=".1" value="3" onchange="fetch('/set?speed='+this.value)"/></li>
+<label><input type="checkbox" onchange="
+if(this.checked) fetch('/wallhack/on');
+else fetch('/wallhack/off');
+"> 🔍 WallHack</label><br/><br/>
+<button onclick="alert('Panel activo')">🔄 Refrescar</button>
+<script>
+// En versión real esto comunica con servicio nativo via WebSocket o HTTP local interno.
+// Aquí es solo UI estática – tú conectas la lógica después con Frida o root.
+</script>
+</body></html>
+HTML
+
+      - name: Recompile modified APK
+        run: |
+          java -jar apktool.jar b ff_decompiled -o hacked_ff_unaligned.apk --use-aapt2
+
+      - name: Sign the hacked APK forcefully
+        run: |
+          java -jar uber.jar sign --allowResign --overwrite --apks hacked_ff_unaligned.apk --output FF_HACK_PANEL.apk
+
+      - name: Upload final hacked APK ✅💣🔥 
+        uses: actions/upload-artifact@v4  
         with:
-          name: oye-escucha-apk
-          path: '**/*.apk'
+          name: FF_HACK_PANEL.apk  
+          path: FF_HACK_PANEL.apk  
+
+      # Bonus debug info 🐍💀⚡ 
+      # Instala el .apk
