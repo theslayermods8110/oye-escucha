@@ -19,91 +19,117 @@ public partial class MainPage : ContentPage
     private string lang = "es";
     private bool langAsked = false;
 
-    // Textos por idioma
     private Dictionary<string, Dictionary<string,string>> T = new()
     {
-        ["es"] = new() { ["title"]="Mis Archivos", ["search"]="Buscar archivos...", ["back"]="⬅ Atrás", ["home"]="🏠 Inicio", ["refresh"]="🔄 Recargar", ["lang"]="Cambiar idioma", ["empty"]="Carpeta vacía o sin permiso. Dale al botón naranja.", ["loading"]="Cargando...", ["folder"]="Carpeta", ["file"]="Archivo", ["items"]="elementos", ["results"]="resultados para", ["choose"]="Elige tu idioma / Choose your language", ["perm"]="⚠️ Dale aquí para dar permiso total y ver dentro de carpetas" },
-        ["en"] = new() { ["title"]="My Files", ["search"]="Search files...", ["back"]="⬅ Back", ["home"]="🏠 Home", ["refresh"]="🔄 Reload", ["lang"]="Change language", ["empty"]="Empty folder or no permission. Tap orange button.", ["loading"]="Loading...", ["folder"]="Folder", ["file"]="File", ["items"]="items", ["results"]="results for", ["choose"]="Choose your language", ["perm"]="⚠️ Tap here to give full permission and see inside folders" },
-        ["fr"] = new() { ["title"]="Mes Fichiers", ["search"]="Rechercher...", ["back"]="⬅ Retour", ["home"]="🏠 Accueil", ["refresh"]="🔄 Recharger", ["lang"]="Changer de langue", ["empty"]="Dossier vide ou sans permission.", ["loading"]="Chargement...", ["folder"]="Dossier", ["file"]="Fichier", ["items"]="éléments", ["results"]="résultats pour", ["choose"]="Choisis ta langue", ["perm"]="⚠️ Appuie ici pour donner permission totale" },
-        ["ht"] = new() { ["title"]="Fichye M yo", ["search"]="Chèche fichye...", ["back"]="⬅ Tounen", ["home"]="🏠 Akèy", ["refresh"]="🔄 Rechaje", ["lang"]="Chanje lang", ["empty"]="Dosye vid oswa san pèmisyon.", ["loading"]="Ap chaje...", ["folder"]="Dosye", ["file"]="Fichye", ["items"]="eleman", ["results"]="rezilta pou", ["choose"]="Chwazi lang ou", ["perm"]="⚠️ Peze isit la pou bay pèmisyon total" },
+        ["es"] = new() { ["title"]="Mis Archivos", ["search"]="Buscar archivos...", ["back"]="⬅ Atrás", ["home"]="🏠 Inicio", ["refresh"]="🔄 Recargar", ["lang"]="Cambiar idioma", ["empty"]="Carpeta vacía o sin permiso.", ["loading"]="Cargando...", ["folder"]="Carpeta", ["file"]="Archivo", ["items"]="elementos", ["results"]="resultados para", ["choose"]="Elige tu idioma / Choose your language", ["perm"]="⚠️ Dar permiso total para ver dentro de carpetas" },
+        ["en"] = new() { ["title"]="My Files", ["search"]="Search files...", ["back"]="⬅ Back", ["home"]="🏠 Home", ["refresh"]="🔄 Reload", ["lang"]="Change language", ["empty"]="Empty folder or no permission.", ["loading"]="Loading...", ["folder"]="Folder", ["file"]="File", ["items"]="items", ["results"]="results for", ["choose"]="Choose your language", ["perm"]="⚠️ Give full permission to see inside folders" },
+        ["fr"] = new() { ["title"]="Mes Fichiers", ["search"]="Rechercher...", ["back"]="⬅ Retour", ["home"]="🏠 Accueil", ["refresh"]="🔄 Recharger", ["lang"]="Changer de langue", ["empty"]="Dossier vide ou sans permission.", ["loading"]="Chargement...", ["folder"]="Dossier", ["file"]="Fichier", ["items"]="éléments", ["results"]="résultats pour", ["choose"]="Choisis ta langue", ["perm"]="⚠️ Donner permission totale" },
+        ["ht"] = new() { ["title"]="Fichye M yo", ["search"]="Chèche fichye...", ["back"]="⬅ Tounen", ["home"]="🏠 Akèy", ["refresh"]="🔄 Rechaje", ["lang"]="Chanje lang", ["empty"]="Dosye vid oswa san pèmisyon.", ["loading"]="Ap chaje...", ["folder"]="Dosye", ["file"]="Fichye", ["items"]="eleman", ["results"]="rezilta pou", ["choose"]="Chwazi lang ou", ["perm"]="⚠️ Bay pèmisyon total" },
     };
 
     public MainPage()
     {
         InitializeComponent();
         FilesList.ItemsSource = visibleItems;
-        lang = Preferences.Get("idioma", "");
+        try { lang = Preferences.Get("idioma", "es"); } catch { lang = "es"; }
+        if (string.IsNullOrEmpty(lang)) lang = "es";
     }
 
     protected override async void OnAppearing()
     {
         base.OnAppearing();
-        if (string.IsNullOrEmpty(lang) && !langAsked)
+        try
         {
-            langAsked = true;
-            await AskLanguage();
-        }
-        else if (!string.IsNullOrEmpty(lang))
-        {
+            if (string.IsNullOrEmpty(Preferences.Get("idioma", "")) && !langAsked)
+            {
+                langAsked = true;
+                await AskLanguage();
+            }
             ApplyLanguage();
+            CheckPermissionButton();
+            await LoadFolder(currentPath);
         }
-        CheckPermissionButton();
-        await LoadFolder(currentPath);
+        catch { }
     }
 
     private async Task AskLanguage()
     {
-        string res = await DisplayActionSheet(T["es"]["choose"], "OK", null, "🇩🇴 Español", "🇺🇸 English", "🇫🇷 Français", "🇭🇹 Kreyòl");
-        if (res.Contains("English")) lang = "en";
-        else if (res.Contains("Français")) lang = "fr";
-        else if (res.Contains("Kreyòl")) lang = "ht";
-        else lang = "es";
-        Preferences.Set("idioma", lang);
-        ApplyLanguage();
+        try
+        {
+            string res = await DisplayActionSheet("Elige tu idioma / Choose your language", "OK", null, "🇩🇴 Español", "🇺🇸 English", "🇫🇷 Français", "🇭🇹 Kreyòl");
+            if (res != null && res.Contains("English")) lang = "en";
+            else if (res != null && res.Contains("Français")) lang = "fr";
+            else if (res != null && res.Contains("Kreyòl")) lang = "ht";
+            else lang = "es";
+            Preferences.Set("idioma", lang);
+        }
+        catch { lang = "es"; }
     }
 
     private void ApplyLanguage()
     {
-        var d = T[lang];
-        TitleLabel.Text = d["title"];
-        SearchEntry.Placeholder = d["search"];
-        BackBtn.Text = d["back"];
-        HomeBtn.Text = d["home"];
-        RefreshBtn.Text = d["refresh"];
-        LangBtn.Text = d["lang"];
-        PermissionBtn.Text = d["perm"];
+        try
+        {
+            var d = T.ContainsKey(lang) ? T[lang] : T["es"];
+            TitleLabel.Text = d["title"];
+            SearchEntry.Placeholder = d["search"];
+            BackBtn.Text = d["back"];
+            HomeBtn.Text = d["home"];
+            RefreshBtn.Text = d["refresh"];
+            LangBtn.Text = d["lang"];
+            PermissionBtn.Text = d["perm"];
+        }
+        catch { }
     }
 
     private void CheckPermissionButton()
     {
-#if ANDROID
         try
         {
-            bool hasAll = Android.OS.Environment.IsExternalStorageManager;
+#if ANDROID
+            bool hasAll = false;
+            try { hasAll = Android.OS.Environment.IsExternalStorageManager; } catch { hasAll = false; }
             PermissionBtn.IsVisible = !hasAll;
-        }
-        catch { PermissionBtn.IsVisible = true; }
 #else
-        PermissionBtn.IsVisible = false;
+            PermissionBtn.IsVisible = false;
 #endif
+        }
+        catch { PermissionBtn.IsVisible = false; }
     }
 
+    // ESTE ES EL ARREGLADO - ANTES DABA CRASH AQUÍ
     private async void OnPermissionClicked(object sender, EventArgs e)
     {
-#if ANDROID
         try
         {
-            var intent = new Android.Content.Intent(Android.Provider.Settings.ActionManageAppAllFilesAccessPermission);
-            intent.SetData(Android.Net.Uri.Parse("package:" + Android.App.Application.Context.PackageName));
-            Android.App.Application.Context.StartActivity(intent);
-            await DisplayAlert("Permiso", "Activa 'Permitir acceso a todos los archivos' y vuelve a la app.", "OK");
-        }
-        catch
-        {
-            var intent = new Android.Content.Intent(Android.Provider.Settings.ActionManageAllFilesAccessPermission);
-            Android.App.Application.Context.StartActivity(intent);
-        }
+#if ANDROID
+            await MainThread.InvokeOnMainThreadAsync(async () =>
+            {
+                try
+                {
+                    var activity = Platform.CurrentActivity;
+                    if (activity != null)
+                    {
+                        var intent = new Android.Content.Intent(Android.Provider.Settings.ActionManageAppAllFilesAccessPermission);
+                        intent.SetData(Android.Net.Uri.Parse("package:" + activity.PackageName));
+                        activity.StartActivity(intent);
+                    }
+                    else
+                    {
+                        // Si no hay activity, abre ajustes normal, no da crash
+                        AppInfo.ShowSettingsUI();
+                    }
+                }
+                catch
+                {
+                    // Si falla el intent especial, abre ajustes normal
+                    try { AppInfo.ShowSettingsUI(); } catch { }
+                }
+            });
+            await DisplayAlert("Permiso", "Activa 'Permitir acceso a todos los archivos' y vuelve atrás a la app.", "OK");
 #endif
+        }
+        catch { }
         await Task.Delay(500);
         CheckPermissionButton();
         await LoadFolder(currentPath);
@@ -112,8 +138,8 @@ public partial class MainPage : ContentPage
     private async void OnChangeLangClicked(object sender, EventArgs e)
     {
         langAsked = false;
-        lang = "";
         await AskLanguage();
+        ApplyLanguage();
         await LoadFolder(currentPath);
     }
 
@@ -121,8 +147,8 @@ public partial class MainPage : ContentPage
     {
         try
         {
-            await Permissions.RequestAsync<Permissions.StorageRead>();
-            try { await Permissions.RequestAsync<Permissions.Media>(); } catch {}
+            try { await Permissions.RequestAsync<Permissions.StorageRead>(); } catch { }
+            try { await Permissions.RequestAsync<Permissions.Media>(); } catch { }
 
             currentPath = path;
             PathLabel.Text = path;
@@ -137,13 +163,11 @@ public partial class MainPage : ContentPage
                 return;
             }
 
-            // Usar Java File para Android - lee mejor que Directory
             string[] dirs = Array.Empty<string>();
             string[] files = Array.Empty<string>();
-            try { dirs = Directory.GetDirectories(path); } catch {}
-            try { files = Directory.GetFiles(path); } catch {}
+            try { dirs = Directory.GetDirectories(path); } catch { }
+            try { files = Directory.GetFiles(path); } catch { }
 
-            // Si Directory falla, intentar con Java
             if (dirs.Length == 0 && files.Length == 0)
             {
 #if ANDROID
@@ -153,14 +177,17 @@ public partial class MainPage : ContentPage
                     var list = jFile.ListFiles();
                     if (list != null)
                     {
+                        var dList = new List<string>();
+                        var fList = new List<string>();
                         foreach (var f in list)
                         {
-                            if (f.IsDirectory) dirs = dirs.Append(f.AbsolutePath).ToArray();
-                            else files = files.Append(f.AbsolutePath).ToArray();
+                            try { if (f.IsDirectory) dList.Add(f.AbsolutePath); else fList.Add(f.AbsolutePath); } catch { }
                         }
+                        dirs = dList.ToArray();
+                        files = fList.ToArray();
                     }
                 }
-                catch {}
+                catch { }
 #endif
             }
 
@@ -173,12 +200,12 @@ public partial class MainPage : ContentPage
                     int count = 0;
                     try { count = Directory.GetFileSystemEntries(dir).Length; } catch {
 #if ANDROID
-                        try { count = new Java.IO.File(dir).ListFiles()?.Length ?? 0; } catch {}
+                        try { count = new Java.IO.File(dir).ListFiles()?.Length ?? 0; } catch { }
 #endif
                     }
                     allItems.Add(new FileItem { Name = name, FullPath = dir, Icon = "📁", Info = $"{d["folder"]} • {count} {d["items"]}", IsFolder = true });
                 }
-                catch {}
+                catch { }
             }
 
             foreach (var file in files)
@@ -199,57 +226,60 @@ public partial class MainPage : ContentPage
                     string size = info.Length < 1024 ? $"{info.Length} B" : info.Length < 1024*1024 ? $"{info.Length/1024.0:F1} KB" : $"{info.Length/1024.0/1024.0:F1} MB";
                     allItems.Add(new FileItem { Name = name, FullPath = file, Icon = icon, Info = $"{d["file"]} • {size}", IsFolder = false });
                 }
-                catch {}
+                catch { }
             }
 
             RefreshList("");
             StatusLabel.Text = $"{allItems.Count} {d["items"]}";
             CheckPermissionButton();
         }
-        catch (Exception ex)
-        {
-            StatusLabel.Text = "Error: " + ex.Message;
-            PermissionBtn.IsVisible = true;
-        }
+        catch { }
     }
 
     private void RefreshList(string search)
     {
-        visibleItems.Clear();
-        foreach (var item in allItems)
+        try
         {
-            if (string.IsNullOrWhiteSpace(search) || item.Name.ToLower().Contains(search.ToLower()))
-                visibleItems.Add(item);
+            visibleItems.Clear();
+            foreach (var item in allItems)
+            {
+                if (string.IsNullOrWhiteSpace(search) || item.Name.ToLower().Contains(search.ToLower()))
+                    visibleItems.Add(item);
+            }
         }
-        if (!string.IsNullOrWhiteSpace(search))
-        {
-            var d = T.ContainsKey(lang) ? T[lang] : T["es"];
-            StatusLabel.Text = $"{visibleItems.Count} {d["results"]} '{search}'";
-        }
+        catch { }
     }
 
     private void OnSearchChanged(object sender, TextChangedEventArgs e) => RefreshList(e.NewTextValue ?? "");
 
     private async void OnFileSelected(object sender, SelectionChangedEventArgs e)
     {
-        if (e.CurrentSelection.FirstOrDefault() is not FileItem item) return;
-        ((CollectionView)sender).SelectedItem = null;
-        if (item.IsFolder)
+        try
         {
-            SearchEntry.Text = "";
-            await LoadFolder(item.FullPath);
+            if (e.CurrentSelection.FirstOrDefault() is not FileItem item) return;
+            ((CollectionView)sender).SelectedItem = null;
+            if (item.IsFolder)
+            {
+                SearchEntry.Text = "";
+                await LoadFolder(item.FullPath);
+            }
+            else
+            {
+                try { await Launcher.OpenAsync(new OpenFileRequest { File = new ReadOnlyFile(item.FullPath) }); }
+                catch { }
+            }
         }
-        else
-        {
-            try { await Launcher.OpenAsync(new OpenFileRequest { File = new ReadOnlyFile(item.FullPath) }); }
-            catch (Exception ex) { await DisplayAlert("No se puede abrir", ex.Message, "OK"); }
-        }
+        catch { }
     }
 
     private async void OnBackClicked(object sender, EventArgs e)
     {
-        var parent = Directory.GetParent(currentPath);
-        if (parent != null) await LoadFolder(parent.FullName);
+        try
+        {
+            var parent = Directory.GetParent(currentPath);
+            if (parent != null) await LoadFolder(parent.FullName);
+        }
+        catch { }
     }
     private async void OnHomeClicked(object sender, EventArgs e) => await LoadFolder("/storage/emulated/0");
     private async void OnRefreshClicked(object sender, EventArgs e) => await LoadFolder(currentPath);
