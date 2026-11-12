@@ -2,56 +2,51 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="OyeEscucha.MainPage"
-             BackgroundColor="#0F0F0F">
+             BackgroundColor="White">
     <Grid>
-        <!-- FONDO - TU WALLPAPER DIRECTO DE IBB -->
-        <Image Source="https://i.ibb.co/8gQ2FRCw/wallpaper.jpg" Aspect="AspectFill" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand"/>
-        <!-- VELO OSCURO PARA QUE SE LEAN LAS LETRAS -->
-        <BoxView Color="#99000000" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand"/>
-
         <!-- CONTENIDO NORMAL -->
         <Grid RowDefinitions="Auto,Auto,Auto,Auto,*" Padding="16,16,16,0" RowSpacing="10">
             <VerticalStackLayout Grid.Row="0" Spacing="2">
-                <Label x:Name="TitleLabel" Text="Mis Archivos" FontSize="26" FontAttributes="Bold" TextColor="#7EC8FF"/>
-                <Label x:Name="PathLabel" Text="/storage" FontSize="12" TextColor="#7EC8FF" Opacity="0.7">
+                <Label x:Name="TitleLabel" Text="Mis Archivos" FontSize="26" FontAttributes="Bold" TextColor="Black"/>
+                <Label x:Name="PathLabel" Text="/storage" FontSize="12" TextColor="#333333" Opacity="0.8">
                     <Label.GestureRecognizers>
                         <TapGestureRecognizer Tapped="OnPathTapped"/>
                     </Label.GestureRecognizers>
                 </Label>
-                <Label Text="Toca la ruta para copiarla" FontSize="10" TextColor="#7EC8FF" Opacity="0.4"/>
+                <Label Text="Toca la ruta para copiarla" FontSize="10" TextColor="#888888"/>
             </VerticalStackLayout>
-            <Border Grid.Row="1" BackgroundColor="#CC1E1E1E" StrokeShape="RoundRectangle 14,14,14,14" Stroke="Transparent" Padding="12,8">
+            <Border Grid.Row="1" BackgroundColor="#F0F0F0" StrokeShape="RoundRectangle 14,14,14,14" Stroke="Transparent" Padding="12,8">
                 <HorizontalStackLayout Spacing="10">
-                    <Label Text="Buscar" FontSize="14" FontAttributes="Bold" VerticalOptions="Center" TextColor="#7EC8FF"/>
-                    <Entry x:Name="SearchEntry" Placeholder="Buscar archivos..." PlaceholderColor="#7EC8FF" TextColor="#7EC8FF" HorizontalOptions="FillAndExpand" BackgroundColor="Transparent" TextChanged="OnSearchChanged"/>
+                    <Label Text="Buscar" FontSize="14" FontAttributes="Bold" VerticalOptions="Center" TextColor="Black"/>
+                    <Entry x:Name="SearchEntry" Placeholder="Buscar archivos..." PlaceholderColor="#888888" TextColor="Black" HorizontalOptions="FillAndExpand" BackgroundColor="Transparent" TextChanged="OnSearchChanged"/>
                 </HorizontalStackLayout>
             </Border>
-            <Button Grid.Row="2" x:Name="PermissionBtn" Text="Dar permiso total para ver dentro de carpetas" BackgroundColor="#1E1E1E" TextColor="#7EC8FF" CornerRadius="12" Clicked="OnPermissionClicked" IsVisible="False"/>
+            <Button Grid.Row="2" x:Name="PermissionBtn" Text="Dar permiso total para ver dentro de carpetas" BackgroundColor="#F0F0F0" TextColor="Black" CornerRadius="12" Clicked="OnPermissionClicked" IsVisible="False"/>
             <Grid Grid.Row="3" ColumnDefinitions="*,*" ColumnSpacing="8">
-                <Button Grid.Column="0" Text="+ Crear Carpeta" BackgroundColor="#1E1E1E" TextColor="#7EC8FF" CornerRadius="14" FontSize="13" FontAttributes="Bold" Padding="4,10" Clicked="OnCreateFolderClicked"/>
-                <Button Grid.Column="1" Text="+ Crear Archivo" BackgroundColor="#1E1E1E" TextColor="#7EC8FF" CornerRadius="14" FontSize="13" FontAttributes="Bold" Padding="4,10" Clicked="OnCreateFileClicked"/>
+                <Button Grid.Column="0" Text="+ Crear Carpeta" BackgroundColor="#F0F0F0" TextColor="Black" CornerRadius="14" FontSize="13" FontAttributes="Bold" Padding="4,10" Clicked="OnCreateFolderClicked"/>
+                <Button Grid.Column="1" Text="+ Crear Archivo" BackgroundColor="#F0F0F0" TextColor="Black" CornerRadius="14" FontSize="13" FontAttributes="Bold" Padding="4,10" Clicked="OnCreateFileClicked"/>
             </Grid>
             <CollectionView Grid.Row="4" x:Name="FilesList" SelectionMode="Single" SelectionChanged="OnFileSelected" VerticalOptions="FillAndExpand" VerticalScrollBarVisibility="Always">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        <Border BackgroundColor="#CC1E1E1E" StrokeShape="RoundRectangle 14,14,14,14" Stroke="Transparent" Padding="12" Margin="0,0,0,8">
+                        <Border BackgroundColor="#F0F0F0" StrokeShape="RoundRectangle 14,14,14,14" Stroke="Transparent" Padding="12" Margin="0,0,0,8">
                             <HorizontalStackLayout Spacing="12">
-                                <Border BackgroundColor="#2A2A2A" StrokeShape="RoundRectangle 12,12,12,12" Stroke="Transparent" WidthRequest="52" HeightRequest="52" VerticalOptions="Center" Padding="0">
+                                <Border BackgroundColor="White" StrokeShape="RoundRectangle 12,12,12,12" Stroke="Transparent" WidthRequest="52" HeightRequest="52" VerticalOptions="Center" Padding="0">
                                     <Grid>
-                                        <Path Data="{Binding IconGeometry}" Fill="#7EC8FF" Aspect="Uniform" HorizontalOptions="Center" VerticalOptions="Center" WidthRequest="28" HeightRequest="28" IsVisible="{Binding ShowDefaultIcon}"/>
+                                        <Path Data="{Binding IconGeometry}" Fill="Black" Aspect="Uniform" HorizontalOptions="Center" VerticalOptions="Center" WidthRequest="28" HeightRequest="28" IsVisible="{Binding ShowDefaultIcon}"/>
                                         <Image Source="{Binding ApkIcon}" Aspect="AspectFill" IsVisible="{Binding HasApkIcon}"/>
                                     </Grid>
                                 </Border>
                                 <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="FillAndExpand">
-                                    <Label Text="{Binding Name}" TextColor="#7EC8FF" FontSize="15" FontAttributes="Bold" LineBreakMode="TailTruncation"/>
-                                    <Label Text="{Binding Info}" TextColor="#7EC8FF" Opacity="0.6" FontSize="12" FontAttributes="Bold"/>
+                                    <Label Text="{Binding Name}" TextColor="Black" FontSize="15" FontAttributes="Bold" LineBreakMode="TailTruncation"/>
+                                    <Label Text="{Binding Info}" TextColor="#666666" FontSize="12" FontAttributes="Bold"/>
                                 </VerticalStackLayout>
                             </HorizontalStackLayout>
                         </Border>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
                 <CollectionView.EmptyView>
-                    <Label Text="Carpeta vacia o sin permiso." TextColor="#7EC8FF" HorizontalOptions="Center" Margin="0,40,0,0"/>
+                    <Label Text="Carpeta vacia o sin permiso." TextColor="Black" HorizontalOptions="Center" Margin="0,40,0,0"/>
                 </CollectionView.EmptyView>
                 <CollectionView.Footer>
                     <BoxView HeightRequest="90" Color="Transparent"/>
@@ -62,12 +57,12 @@
         <Label x:Name="StatusLabel" Text="" IsVisible="False" HeightRequest="0"/>
 
         <!-- BARRA FLOTANTE -->
-        <Border VerticalOptions="End" HorizontalOptions="FillAndExpand" Margin="16,0,16,16" BackgroundColor="#1E1E1E" StrokeShape="RoundRectangle 22,22,22,22" Stroke="#333" StrokeThickness="1" Padding="8" Shadow="0,5,20,Black">
+        <Border VerticalOptions="End" HorizontalOptions="FillAndExpand" Margin="16,0,16,16" BackgroundColor="White" StrokeShape="RoundRectangle 22,22,22,22" Stroke="#DDDDDD" StrokeThickness="1" Padding="8" Shadow="0,5,20,#AAAAAA">
             <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="6">
-                <Button Grid.Column="0" x:Name="BackBtn" Text="Atras" BackgroundColor="#333" TextColor="#7EC8FF" CornerRadius="14" FontSize="12" Padding="4,10" Clicked="OnBackClicked"/>
-                <Button Grid.Column="1" x:Name="HomeBtn" Text="Inicio" BackgroundColor="#333" TextColor="#7EC8FF" CornerRadius="14" FontSize="12" Padding="4,10" Clicked="OnHomeClicked"/>
-                <Button Grid.Column="2" x:Name="RefreshBtn" Text="Recargar" BackgroundColor="#333" TextColor="#7EC8FF" CornerRadius="14" FontSize="12" Padding="4,10" Clicked="OnRefreshClicked"/>
-                <Button Grid.Column="3" x:Name="LangBtn" Text="Idioma" BackgroundColor="#333" TextColor="#7EC8FF" CornerRadius="14" FontSize="12" Padding="4,10" Clicked="OnChangeLangClicked"/>
+                <Button Grid.Column="0" x:Name="BackBtn" Text="Atras" BackgroundColor="#F0F0F0" TextColor="Black" CornerRadius="14" FontSize="12" Padding="4,10" Clicked="OnBackClicked"/>
+                <Button Grid.Column="1" x:Name="HomeBtn" Text="Inicio" BackgroundColor="#F0F0F0" TextColor="Black" CornerRadius="14" FontSize="12" Padding="4,10" Clicked="OnHomeClicked"/>
+                <Button Grid.Column="2" x:Name="RefreshBtn" Text="Recargar" BackgroundColor="#F0F0F0" TextColor="Black" CornerRadius="14" FontSize="12" Padding="4,10" Clicked="OnRefreshClicked"/>
+                <Button Grid.Column="3" x:Name="LangBtn" Text="Idioma" BackgroundColor="#F0F0F0" TextColor="Black" CornerRadius="14" FontSize="12" Padding="4,10" Clicked="OnChangeLangClicked"/>
             </Grid>
         </Border>
     </Grid>
