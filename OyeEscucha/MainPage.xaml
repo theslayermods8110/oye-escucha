@@ -4,6 +4,11 @@
              x:Class="OyeEscucha.MainPage"
              BackgroundColor="#0F0F0F">
     <Grid>
+        <!-- FONDO - TU WALLPAPER DIRECTO DE IBB -->
+        <Image Source="https://i.ibb.co/8gQ2FRCw/wallpaper.jpg" Aspect="AspectFill" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand"/>
+        <!-- VELO OSCURO PARA QUE SE LEAN LAS LETRAS -->
+        <BoxView Color="#99000000" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand"/>
+
         <!-- CONTENIDO NORMAL -->
         <Grid RowDefinitions="Auto,Auto,Auto,Auto,*" Padding="16,16,16,0" RowSpacing="10">
             <VerticalStackLayout Grid.Row="0" Spacing="2">
@@ -15,7 +20,7 @@
                 </Label>
                 <Label Text="Toca la ruta para copiarla" FontSize="10" TextColor="#7EC8FF" Opacity="0.4"/>
             </VerticalStackLayout>
-            <Border Grid.Row="1" BackgroundColor="#1E1E1E" StrokeShape="RoundRectangle 14,14,14,14" Stroke="Transparent" Padding="12,8">
+            <Border Grid.Row="1" BackgroundColor="#CC1E1E1E" StrokeShape="RoundRectangle 14,14,14,14" Stroke="Transparent" Padding="12,8">
                 <HorizontalStackLayout Spacing="10">
                     <Label Text="Buscar" FontSize="14" FontAttributes="Bold" VerticalOptions="Center" TextColor="#7EC8FF"/>
                     <Entry x:Name="SearchEntry" Placeholder="Buscar archivos..." PlaceholderColor="#7EC8FF" TextColor="#7EC8FF" HorizontalOptions="FillAndExpand" BackgroundColor="Transparent" TextChanged="OnSearchChanged"/>
@@ -29,7 +34,7 @@
             <CollectionView Grid.Row="4" x:Name="FilesList" SelectionMode="Single" SelectionChanged="OnFileSelected" VerticalOptions="FillAndExpand" VerticalScrollBarVisibility="Always">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        <Border BackgroundColor="#1E1E1E" StrokeShape="RoundRectangle 14,14,14,14" Stroke="Transparent" Padding="12" Margin="0,0,0,8">
+                        <Border BackgroundColor="#CC1E1E1E" StrokeShape="RoundRectangle 14,14,14,14" Stroke="Transparent" Padding="12" Margin="0,0,0,8">
                             <HorizontalStackLayout Spacing="12">
                                 <Border BackgroundColor="#2A2A2A" StrokeShape="RoundRectangle 12,12,12,12" Stroke="Transparent" WidthRequest="52" HeightRequest="52" VerticalOptions="Center" Padding="0">
                                     <Grid>
@@ -54,7 +59,6 @@
             </CollectionView>
         </Grid>
 
-        <!-- ESTE LABEL QUEDA ESCONDIDO PARA QUE NO DE ERROR EN EL .CS, PERO YA NO SE VE -->
         <Label x:Name="StatusLabel" Text="" IsVisible="False" HeightRequest="0"/>
 
         <!-- BARRA FLOTANTE -->
