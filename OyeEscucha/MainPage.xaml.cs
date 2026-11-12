@@ -61,7 +61,36 @@ public partial class MainPage : ContentPage
         FilesList.ItemsSource = visibleItems;
         try { lang = Preferences.Get("idioma", "es"); } catch { lang = "es"; }
         if (string.IsNullOrEmpty(lang)) lang = "es";
+        ApplyTheme();
     }
+
+    // ===== TEMA SOL / LUNA EN VECTOR =====
+    private void OnThemeClicked(object sender, TappedEventArgs e)
+    {
+        try
+        {
+            string actual = Preferences.Get("tema", "dark");
+            string nuevo = actual == "light" ? "dark" : "light";
+            Preferences.Set("tema", nuevo);
+            ApplyTheme();
+        }
+        catch { }
+    }
+
+    private void ApplyTheme()
+    {
+        try
+        {
+            string tema = Preferences.Get("tema", "dark");
+            bool esLight = tema == "light";
+            if (Application.Current != null)
+                Application.Current.UserAppTheme = esLight ? AppTheme.Light : AppTheme.Dark;
+            SunIcon.IsVisible = esLight;
+            MoonIcon.IsVisible = !esLight;
+        }
+        catch { }
+    }
+    // =====================================
 
     protected override async void OnAppearing()
     {
@@ -80,14 +109,9 @@ public partial class MainPage : ContentPage
         catch { }
     }
 
-    private async void OnPathTapped(object sender, EventArgs e)
+    private async void OnPathTapped(object sender, TappedEventArgs e)
     {
-        try
-        {
-            await Clipboard.SetTextAsync(currentPath);
-            await DisplayAlertAsync("Copiado", currentPath, "OK");
-        }
-        catch { }
+        try { await Clipboard.SetTextAsync(currentPath); await DisplayAlertAsync("Copiado", currentPath, "OK"); } catch { }
     }
 
     private async void OnCreateFolderClicked(object sender, EventArgs e)
@@ -99,11 +123,7 @@ public partial class MainPage : ContentPage
             name = name.Trim();
             foreach (char c in Path.GetInvalidFileNameChars()) name = name.Replace(c, '_');
             string newPath = Path.Combine(currentPath, name);
-            if (Directory.Exists(newPath))
-            {
-                await DisplayAlertAsync("Aviso", "Esa carpeta ya existe.", "OK");
-                return;
-            }
+            if (Directory.Exists(newPath)) { await DisplayAlertAsync("Aviso", "Esa carpeta ya existe.", "OK"); return; }
             Directory.CreateDirectory(newPath);
             await LoadFolder(currentPath);
         }
@@ -120,17 +140,11 @@ public partial class MainPage : ContentPage
             foreach (char c in Path.GetInvalidFileNameChars()) name = name.Replace(c, '_');
             if (string.IsNullOrEmpty(Path.GetExtension(name))) name += ".txt";
             string newPath = Path.Combine(currentPath, name);
-            if (File.Exists(newPath))
-            {
-                await DisplayAlertAsync("Aviso", "Ese archivo ya existe.", "OK");
-                return;
-            }
+            if (File.Exists(newPath)) { await DisplayAlertAsync("Aviso", "Ese archivo ya existe.", "OK"); return; }
             File.WriteAllText(newPath, "");
             string ext = Path.GetExtension(newPath).ToLower();
             if (ext is ".txt" or ".json" or ".kt" or ".cs" or ".xml" or ".md" or ".log" or ".html" or ".css" or ".js" or ".py" or ".java")
-            {
                 await Navigation.PushAsync(new EditorPage(newPath));
-            }
             await LoadFolder(currentPath);
         }
         catch (Exception ex) { await DisplayAlertAsync("Error", "No se pudo crear: " + ex.Message, "OK"); }
@@ -143,10 +157,7 @@ public partial class MainPage : ContentPage
             var page = new LanguagePage();
             await Navigation.PushModalAsync(page);
             string res = await page.ResultTask;
-            if (res == "en") lang = "en";
-            else if (res == "fr") lang = "fr";
-            else if (res == "ht") lang = "ht";
-            else lang = "es";
+            if (res == "en") lang = "en"; else if (res == "fr") lang = "fr"; else if (res == "ht") lang = "ht"; else lang = "es";
             Preferences.Set("idioma", lang);
             ApplyLanguage();
         }
@@ -213,11 +224,7 @@ public partial class MainPage : ContentPage
         await LoadFolder(currentPath);
     }
 
-    private async void OnChangeLangClicked(object sender, EventArgs e)
-    {
-        await AskLanguage();
-        await LoadFolder(currentPath);
-    }
+    private async void OnChangeLangClicked(object sender, EventArgs e) { await AskLanguage(); await LoadFolder(currentPath); }
 
     private (ImageSource? icon, bool has) GetApkIcon(string apkPath)
     {
@@ -356,10 +363,7 @@ public partial class MainPage : ContentPage
             if (item.IsFolder) { SearchEntry.Text = ""; await LoadFolder(item.FullPath); return; }
             string ext = Path.GetExtension(item.FullPath).ToLower();
             if (ext is ".txt" or ".json" or ".kt" or ".cs" or ".xml" or ".md" or ".log" or ".html" or ".css" or ".js" or ".py" or ".java" or ".kts" or ".gradle" or ".yml" or ".yaml" or ".ini" or ".csv")
-            {
-                await Navigation.PushAsync(new EditorPage(item.FullPath));
-                return;
-            }
+            { await Navigation.PushAsync(new EditorPage(item.FullPath)); return; }
             if (ext is ".zip") { await OpenZip(item.FullPath); return; }
             if (ext == ".apk") { await InstallApk(item.FullPath); return; }
             try { await Launcher.OpenAsync(new OpenFileRequest { File = new ReadOnlyFile(item.FullPath) }); }
@@ -413,9 +417,7 @@ public partial class MainPage : ContentPage
     }
 
     private async void OnBackClicked(object sender, EventArgs e)
-    {
-        try { var parent = Directory.GetParent(currentPath); if (parent != null) await LoadFolder(parent.FullName); } catch { }
-    }
+    { try { var parent = Directory.GetParent(currentPath); if (parent != null) await LoadFolder(parent.FullName); } catch { } }
     private async void OnHomeClicked(object sender, EventArgs e) => await LoadFolder("/storage/emulated/0");
     private async void OnRefreshClicked(object sender, EventArgs e) => await LoadFolder(currentPath);
 }
