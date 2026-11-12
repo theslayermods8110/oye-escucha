@@ -18,13 +18,14 @@ public partial class MainPage : ContentPage
     private ObservableCollection<FileItem> visibleItems = new();
     private string lang = "es";
     private bool langAsked = false;
+    private bool isNavigating = false;
 
     private Dictionary<string, Dictionary<string,string>> T = new()
     {
-        ["es"] = new() { ["title"]="Mis Archivos", ["search"]="Buscar archivos...", ["back"]="⬅ Atrás", ["home"]="🏠 Inicio", ["refresh"]="🔄 Recargar", ["lang"]="Cambiar idioma", ["empty"]="Carpeta vacía o sin permiso.", ["loading"]="Cargando...", ["folder"]="Carpeta", ["file"]="Archivo", ["items"]="elementos", ["results"]="resultados para", ["choose"]="Elige tu idioma / Choose your language", ["perm"]="⚠️ Dar permiso total para ver dentro de carpetas" },
-        ["en"] = new() { ["title"]="My Files", ["search"]="Search files...", ["back"]="⬅ Back", ["home"]="🏠 Home", ["refresh"]="🔄 Reload", ["lang"]="Change language", ["empty"]="Empty folder or no permission.", ["loading"]="Loading...", ["folder"]="Folder", ["file"]="File", ["items"]="items", ["results"]="results for", ["choose"]="Choose your language", ["perm"]="⚠️ Give full permission to see inside folders" },
-        ["fr"] = new() { ["title"]="Mes Fichiers", ["search"]="Rechercher...", ["back"]="⬅ Retour", ["home"]="🏠 Accueil", ["refresh"]="🔄 Recharger", ["lang"]="Changer de langue", ["empty"]="Dossier vide ou sans permission.", ["loading"]="Chargement...", ["folder"]="Dossier", ["file"]="Fichier", ["items"]="éléments", ["results"]="résultats pour", ["choose"]="Choisis ta langue", ["perm"]="⚠️ Donner permission totale" },
-        ["ht"] = new() { ["title"]="Fichye M yo", ["search"]="Chèche fichye...", ["back"]="⬅ Tounen", ["home"]="🏠 Akèy", ["refresh"]="🔄 Rechaje", ["lang"]="Chanje lang", ["empty"]="Dosye vid oswa san pèmisyon.", ["loading"]="Ap chaje...", ["folder"]="Dosye", ["file"]="Fichye", ["items"]="eleman", ["results"]="rezilta pou", ["choose"]="Chwazi lang ou", ["perm"]="⚠️ Bay pèmisyon total" },
+        ["es"] = new() { ["title"]="Mis Archivos", ["search"]="Buscar archivos...", ["back"]="⬅ Atrás", ["home"]="🏠 Inicio", ["refresh"]="🔄 Recargar", ["lang"]="Cambiar idioma", ["empty"]="Carpeta vacía o sin permiso.", ["loading"]="Cargando...", ["folder"]="Carpeta", ["file"]="Archivo", ["items"]="elementos", ["perm"]="⚠️ Dar permiso total para ver dentro de carpetas" },
+        ["en"] = new() { ["title"]="My Files", ["search"]="Search files...", ["back"]="⬅ Back", ["home"]="🏠 Home", ["refresh"]="🔄 Reload", ["lang"]="Change language", ["empty"]="Empty folder or no permission.", ["loading"]="Loading...", ["folder"]="Folder", ["file"]="File", ["items"]="items", ["perm"]="⚠️ Give full permission to see inside folders" },
+        ["fr"] = new() { ["title"]="Mes Fichiers", ["search"]="Rechercher...", ["back"]="⬅ Retour", ["home"]="🏠 Accueil", ["refresh"]="🔄 Recharger", ["lang"]="Changer de langue", ["empty"]="Dossier vide ou sans permission.", ["loading"]="Chargement...", ["folder"]="Dossier", ["file"]="Fichier", ["items"]="éléments", ["perm"]="⚠️ Donner permission totale" },
+        ["ht"] = new() { ["title"]="Fichye M yo", ["search"]="Chèche fichye...", ["back"]="⬅ Tounen", ["home"]="🏠 Akèy", ["refresh"]="🔄 Rechaje", ["lang"]="Chanje lang", ["empty"]="Dosye vid oswa san pèmisyon.", ["loading"]="Ap chaje...", ["folder"]="Dosye", ["file"]="Fichye", ["items"]="eleman", ["perm"]="⚠️ Bay pèmisyon total" },
     };
 
     public MainPage()
@@ -56,10 +57,11 @@ public partial class MainPage : ContentPage
     {
         try
         {
-            string res = await DisplayActionSheet("Elige tu idioma / Choose your language", "OK", null, "🇩🇴 Español", "🇺🇸 English", "🇫🇷 Français", "🇭🇹 Kreyòl");
-            if (res != null && res.Contains("English")) lang = "en";
-            else if (res != null && res.Contains("Français")) lang = "fr";
-            else if (res != null && res.Contains("Kreyòl")) lang = "ht";
+            // SIN BANDERAS, solo nombre del idioma
+            string res = await DisplayActionSheet("Elige tu idioma / Choose your language", "OK", null, "Español", "English", "Français", "Kreyòl");
+            if (res == "English") lang = "en";
+            else if (res == "Français") lang = "fr";
+            else if (res == "Kreyòl") lang = "ht";
             else lang = "es";
             Preferences.Set("idioma", lang);
         }
@@ -97,7 +99,6 @@ public partial class MainPage : ContentPage
         catch { PermissionBtn.IsVisible = false; }
     }
 
-    // ESTE ES EL ARREGLADO - ANTES DABA CRASH AQUÍ
     private async void OnPermissionClicked(object sender, EventArgs e)
     {
         try
@@ -114,19 +115,11 @@ public partial class MainPage : ContentPage
                         intent.SetData(Android.Net.Uri.Parse("package:" + activity.PackageName));
                         activity.StartActivity(intent);
                     }
-                    else
-                    {
-                        // Si no hay activity, abre ajustes normal, no da crash
-                        AppInfo.ShowSettingsUI();
-                    }
+                    else { AppInfo.ShowSettingsUI(); }
                 }
-                catch
-                {
-                    // Si falla el intent especial, abre ajustes normal
-                    try { AppInfo.ShowSettingsUI(); } catch { }
-                }
+                catch { try { AppInfo.ShowSettingsUI(); } catch { } }
             });
-            await DisplayAlert("Permiso", "Activa 'Permitir acceso a todos los archivos' y vuelve atrás a la app.", "OK");
+            await DisplayAlert("Permiso", "Activa 'Permitir acceso a todos los archivos' y vuelve atrás.", "OK");
 #endif
         }
         catch { }
@@ -145,6 +138,8 @@ public partial class MainPage : ContentPage
 
     private async Task LoadFolder(string path)
     {
+        if (isNavigating) return;
+        isNavigating = true;
         try
         {
             try { await Permissions.RequestAsync<Permissions.StorageRead>(); } catch { }
@@ -156,6 +151,7 @@ public partial class MainPage : ContentPage
             StatusLabel.Text = d["loading"];
             allItems.Clear();
             visibleItems.Clear();
+            FilesList.SelectedItem = null;
 
             if (!Directory.Exists(path))
             {
@@ -232,8 +228,11 @@ public partial class MainPage : ContentPage
             RefreshList("");
             StatusLabel.Text = $"{allItems.Count} {d["items"]}";
             CheckPermissionButton();
+            // Esto hace que siempre empiece arriba cuando entras a una carpeta
+            await MainThread.InvokeOnMainThreadAsync(() => FilesList.ScrollTo(0, position: ScrollToPosition.Start, animate: false));
         }
         catch { }
+        finally { isNavigating = false; }
     }
 
     private void RefreshList(string search)
@@ -252,12 +251,16 @@ public partial class MainPage : ContentPage
 
     private void OnSearchChanged(object sender, TextChangedEventArgs e) => RefreshList(e.NewTextValue ?? "");
 
+    // ESTE ES EL ARREGLO: un toque, entra de una, sin Tap que traba el scroll
     private async void OnFileSelected(object sender, SelectionChangedEventArgs e)
     {
         try
         {
             if (e.CurrentSelection.FirstOrDefault() is not FileItem item) return;
+            // Limpia la selección para que puedas tocar la misma carpeta otra vez
             ((CollectionView)sender).SelectedItem = null;
+            if (isNavigating) return;
+
             if (item.IsFolder)
             {
                 SearchEntry.Text = "";
