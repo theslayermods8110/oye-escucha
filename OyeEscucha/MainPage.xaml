@@ -5,8 +5,8 @@
              NavigationPage.HasNavigationBar="False"
              Shell.NavBarIsVisible="False"
              BackgroundColor="{AppThemeBinding Light=White, Dark=#0F0F0F}">
-    <Grid BackgroundColor="{AppThemeBinding Light=White, Dark=#0F0F0F}">
-        <Grid RowDefinitions="Auto,Auto,Auto,Auto,*" Padding="16,16,16,0" RowSpacing="10">
+    <Grid RowDefinitions="*,Auto" BackgroundColor="{AppThemeBinding Light=White, Dark=#0F0F0F}">
+        <Grid Grid.Row="0" RowDefinitions="Auto,Auto,Auto,Auto,*" Padding="16,16,16,0" RowSpacing="10">
             <Grid Grid.Row="0" ColumnDefinitions="*,Auto">
                 <VerticalStackLayout Grid.Column="0" Spacing="2">
                     <Label x:Name="TitleLabel" Text="Mis Archivos" FontSize="26" FontAttributes="Bold" TextColor="{AppThemeBinding Light=Black, Dark=#7EC8FF}"/>
@@ -17,15 +17,13 @@
                     </Label>
                     <Label Text="Toca la ruta para copiarla" FontSize="10" TextColor="{AppThemeBinding Light=#888888, Dark=#7EC8FF}" Opacity="0.4"/>
                 </VerticalStackLayout>
-                <!-- SOL / LUNA EN VECTOR, SIN EMOJI -->
+                <!-- SOL / LUNA EN VECTOR -->
                 <Border Grid.Column="1" WidthRequest="50" HeightRequest="50" StrokeShape="RoundRectangle 25,25,25,25" BackgroundColor="Transparent" Stroke="Transparent" VerticalOptions="Start" Padding="0">
                     <Border.GestureRecognizers>
                         <TapGestureRecognizer Tapped="OnThemeClicked"/>
                     </Border.GestureRecognizers>
                     <Grid WidthRequest="28" HeightRequest="28" HorizontalOptions="Center" VerticalOptions="Center">
-                        <!-- LUNA - se ve en modo DARK -->
                         <Path x:Name="MoonIcon" Data="M21 12.79 A9 9 0 1 1 11.21 3 A7 7 0 0 0 21 12.79 Z" Fill="#7EC8FF" Aspect="Uniform" HorizontalOptions="Center" VerticalOptions="Center" WidthRequest="26" HeightRequest="26" IsVisible="True"/>
-                        <!-- SOL - se ve en modo LIGHT -->
                         <Path x:Name="SunIcon" Data="M12 17 A5 5 0 1 1 12 7 A5 5 0 0 1 12 17 Z M12 1 V4 M12 20 V23 M4.22 4.22 L6.34 6.34 M17.66 17.66 L19.78 19.78 M1 12 H4 M20 12 H23 M4.22 19.78 L6.34 17.66 M17.66 6.34 L19.78 4.22" Stroke="Black" StrokeThickness="2" Fill="Transparent" Aspect="Uniform" HorizontalOptions="Center" VerticalOptions="Center" WidthRequest="26" HeightRequest="26" IsVisible="False"/>
                     </Grid>
                 </Border>
@@ -41,35 +39,32 @@
                 <Button Grid.Column="0" Text="+ Crear Carpeta" BackgroundColor="{AppThemeBinding Light=#F0F0F0, Dark=#1E1E1E}" TextColor="{AppThemeBinding Light=Black, Dark=#7EC8FF}" CornerRadius="14" FontSize="13" FontAttributes="Bold" Padding="4,10" Clicked="OnCreateFolderClicked"/>
                 <Button Grid.Column="1" Text="+ Crear Archivo" BackgroundColor="{AppThemeBinding Light=#F0F0F0, Dark=#1E1E1E}" TextColor="{AppThemeBinding Light=Black, Dark=#7EC8FF}" CornerRadius="14" FontSize="13" FontAttributes="Bold" Padding="4,10" Clicked="OnCreateFileClicked"/>
             </Grid>
-            <CollectionView Grid.Row="4" x:Name="FilesList" BackgroundColor="{AppThemeBinding Light=White, Dark=#0F0F0F}" SelectionMode="Single" SelectionChanged="OnFileSelected" VerticalOptions="FillAndExpand" VerticalScrollBarVisibility="Always">
+            <CollectionView Grid.Row="4" x:Name="FilesList" BackgroundColor="Transparent" SelectionMode="Single" SelectionChanged="OnFileSelected" VerticalOptions="FillAndExpand" VerticalScrollBarVisibility="Always">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        <Border BackgroundColor="{AppThemeBinding Light=#F0F0F0, Dark=#1E1E1E}" StrokeShape="RoundRectangle 14,14,14,14" Stroke="Transparent" Padding="12" Margin="0,0,0,8">
-                            <HorizontalStackLayout Spacing="12">
-                                <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#2A2A2A}" StrokeShape="RoundRectangle 12,12,12,12" Stroke="Transparent" WidthRequest="52" HeightRequest="52" VerticalOptions="Center" Padding="0">
-                                    <Grid>
-                                        <Path Data="{Binding IconGeometry}" Fill="{AppThemeBinding Light=Black, Dark=#7EC8FF}" Aspect="Uniform" HorizontalOptions="Center" VerticalOptions="Center" WidthRequest="28" HeightRequest="28" IsVisible="{Binding ShowDefaultIcon}"/>
-                                        <Image Source="{Binding ApkIcon}" Aspect="AspectFill" IsVisible="{Binding HasApkIcon}"/>
-                                    </Grid>
-                                </Border>
-                                <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="FillAndExpand">
-                                    <Label Text="{Binding Name}" TextColor="{AppThemeBinding Light=Black, Dark=#7EC8FF}" FontSize="15" FontAttributes="Bold" LineBreakMode="TailTruncation"/>
-                                    <Label Text="{Binding Info}" TextColor="{AppThemeBinding Light=#666666, Dark=#7EC8FF}" Opacity="0.6" FontSize="12" FontAttributes="Bold"/>
-                                </VerticalStackLayout>
-                            </HorizontalStackLayout>
-                        </Border>
+                        <!-- SIN FONDO OSCURO: TRANSPARENTE, SOLO ICONO + TEXTO -->
+                        <Grid ColumnDefinitions="52, *" Padding="4,10" Margin="0,0,0,4" BackgroundColor="Transparent">
+                            <Grid Grid.Column="0" WidthRequest="52" HeightRequest="52" VerticalOptions="Center" BackgroundColor="Transparent">
+                                <Path Data="{Binding IconGeometry}" Fill="{AppThemeBinding Light=Black, Dark=#7EC8FF}" Aspect="Uniform" HorizontalOptions="Center" VerticalOptions="Center" WidthRequest="32" HeightRequest="32" IsVisible="{Binding ShowDefaultIcon}"/>
+                                <Image Source="{Binding ApkIcon}" Aspect="AspectFill" IsVisible="{Binding HasApkIcon}"/>
+                            </Grid>
+                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" HorizontalOptions="FillAndExpand" BackgroundColor="Transparent">
+                                <Label Text="{Binding Name}" TextColor="{AppThemeBinding Light=Black, Dark=#7EC8FF}" FontSize="16" FontAttributes="Bold" LineBreakMode="TailTruncation"/>
+                                <Label Text="{Binding Info}" TextColor="{AppThemeBinding Light=#666666, Dark=#7EC8FF}" Opacity="0.6" FontSize="12" FontAttributes="Bold"/>
+                            </VerticalStackLayout>
+                        </Grid>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
                 <CollectionView.EmptyView>
                     <Label Text="Carpeta vacia o sin permiso." TextColor="{AppThemeBinding Light=Black, Dark=#7EC8FF}" HorizontalOptions="Center" Margin="0,40,0,0"/>
                 </CollectionView.EmptyView>
-                <CollectionView.Footer>
-                    <BoxView HeightRequest="110" Color="{AppThemeBinding Light=White, Dark=#0F0F0F}"/>
-                </CollectionView.Footer>
             </CollectionView>
         </Grid>
+
         <Label x:Name="StatusLabel" Text="" IsVisible="False" HeightRequest="0"/>
-        <Border VerticalOptions="End" HorizontalOptions="FillAndExpand" Margin="16,0,16,28" BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}" StrokeShape="RoundRectangle 22,22,22,22" Stroke="{AppThemeBinding Light=#DDDDDD, Dark=#333}" StrokeThickness="1" Padding="8" Shadow="0,5,20,#AAAAAA">
+
+        <!-- BARRA FIJA ABAJO -->
+        <Border Grid.Row="1" Margin="16,8,16,16" BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}" StrokeShape="RoundRectangle 22,22,22,22" Stroke="{AppThemeBinding Light=#DDDDDD, Dark=#333}" StrokeThickness="1" Padding="8" Shadow="0,5,20,#AAAAAA">
             <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="6">
                 <Button Grid.Column="0" x:Name="BackBtn" Text="Atras" BackgroundColor="{AppThemeBinding Light=#F0F0F0, Dark=#333}" TextColor="{AppThemeBinding Light=Black, Dark=#7EC8FF}" CornerRadius="14" FontSize="12" Padding="4,10" Clicked="OnBackClicked"/>
                 <Button Grid.Column="1" x:Name="HomeBtn" Text="Inicio" BackgroundColor="{AppThemeBinding Light=#F0F0F0, Dark=#333}" TextColor="{AppThemeBinding Light=Black, Dark=#7EC8FF}" CornerRadius="14" FontSize="12" Padding="4,10" Clicked="OnHomeClicked"/>
